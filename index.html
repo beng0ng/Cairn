@@ -767,6 +767,38 @@ body{line-height:1.65}
 .mark{box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .window{box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 48px -32px rgba(0,0,0,.6)}
 .label{letter-spacing:.12em}
+
+/* v11: simpler, sleeker */
+.section + .section::before{display:none}
+.detail{border-top:0}
+.card,.metric,a.linkcard{border-color:transparent;background:color-mix(in srgb,var(--card) 78%,transparent);transition:background .25s}
+a.linkcard:hover,.card.pick:hover,.metric:hover{border-color:transparent;background:var(--card-2)}
+.pick[aria-pressed="true"]{border-color:color-mix(in srgb,var(--green-text) 55%,transparent)}
+.chip,.chip.g,.chip.r{border:0;background:none;padding:0;font:500 11px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.window{border-color:color-mix(in srgb,var(--border) 70%,transparent);box-shadow:0 30px 60px -40px rgba(0,0,0,.7)}
+.window-bar{border-bottom-color:color-mix(in srgb,var(--border) 60%,transparent);color:var(--muted)}
+.window-bar .dots{display:none}
+.nav-in{border-color:transparent;background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.nav-links a[aria-current="page"]{background:transparent;box-shadow:none;color:var(--ink)}
+.nav-links a{position:relative}
+.nav-links a[aria-current="page"]::after{content:"";position:absolute;left:14px;right:14px;bottom:2px;height:1.5px;border-radius:1px;background:var(--green-text)}
+.btn-secondary{border-color:transparent;background:color-mix(in srgb,var(--card-2) 70%,transparent)}
+.btn-secondary:hover{background:var(--card-2);border-color:transparent}
+h1,h2{letter-spacing:-.035em}
+h3{letter-spacing:-.015em}
+.eyebrow{border:0;background:none;padding-left:0}
+.split{border-color:transparent;background:color-mix(in srgb,var(--card) 78%,transparent)}
+.split > div + div{border-left-color:color-mix(in srgb,var(--border) 60%,transparent)}
+.compare{border-color:transparent;background:transparent}
+.compare th,.compare td{border-bottom-color:color-mix(in srgb,var(--border) 70%,transparent)}
+.compare .us{background:color-mix(in srgb,var(--green-fill) 70%,transparent)}
+footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
+.foot-bottom{border-top:0;padding-top:0}
+.tl-phases button,.tl-detail,.form{border-color:transparent;background:color-mix(in srgb,var(--card) 78%,transparent)}
+.tl-phases button[aria-selected="true"]{border-color:color-mix(in srgb,var(--green-text) 55%,transparent);background:var(--green-fill)}
+.faq,.faq details{border-color:color-mix(in srgb,var(--border) 60%,transparent)}
+.stepbar-in{border-color:transparent}
+.mark{border:0}
 </style>
 </head><body>
 <canvas id="field" aria-hidden="true"></canvas>
