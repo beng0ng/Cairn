@@ -3,7 +3,7 @@
 <meta name="description" content="Cairn finds the hand-offs your AI agent could handle itself, fixes them as tested pull requests, and keeps judgment calls with your team.">
 <meta property="og:title" content="Cairn">
 <meta property="og:description" content="Cairn finds the hand-offs your AI agent could handle itself, fixes them as tested pull requests, and keeps judgment calls with your team.">
-<meta property="og:image" content="https://beng0ng.github.io/Cairn/og-image.png">
+<meta property="og:image" content="https://cairnai.dev/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -719,6 +719,36 @@ footer{padding-block:36px 28px}
 .hero .hero-h{font-size:clamp(30px,3.6vw,46px);letter-spacing:-.03em;line-height:1.08;margin:0}
 .explore .pnum{margin-bottom:2px}
 @media (prefers-reduced-motion:reduce){.brand-title{animation:none}}
+
+/* v9: breathing room */
+:root{--section:clamp(72px,8.5vw,112px)}
+body{line-height:1.65}
+.head{margin-bottom:44px;gap:16px}
+.lede{max-width:58ch;line-height:1.6}
+.stack{gap:18px}
+.card{padding:26px 26px 28px;gap:12px}
+.card p{line-height:1.6}
+.grid-2,.grid-3,.grid-4{gap:24px}
+.detail{padding-block:64px;gap:72px}
+.detail .stack{gap:16px}
+.detail .stack p{max-width:46ch}
+.window-body{padding:20px 22px}
+.hero-grid,.steps-grid,.two-col{gap:64px}
+.flow{margin-block:32px 28px}
+.sub-hero{padding-block:clamp(56px,7vw,96px) clamp(40px,5vw,64px)}
+.sub-hero-in{max-width:calc(var(--wrap) + 2*max(24px, env(safe-area-inset-left,0px)));gap:20px}
+.sub-hero-in > *{max-width:880px}
+.sub-hero-in .lede{max-width:60ch}
+.brand-top{margin-bottom:clamp(40px,5vw,64px)}
+.hero-copy{gap:24px}
+.row-2{align-items:end;gap:20px}
+.form{gap:20px}
+.tl-phases button{padding:14px 16px}
+.tl-phases button span{line-height:1.35}
+.faq details{padding-block:4px}
+.sec-grid .card{padding:24px}
+@media (max-width:900px){.detail{padding-block:48px;gap:28px}.hero-grid,.steps-grid,.two-col{gap:40px}}
+@media (max-width:620px){:root{--section:clamp(56px,14vw,72px)}.head{margin-bottom:32px}.card{padding:22px}.grid-2,.grid-3,.grid-4{gap:16px}}
 </style>
 </head><body>
 <canvas id="field" aria-hidden="true"></canvas>
@@ -1999,4 +2029,5 @@ footer{padding-block:36px 28px}
   route();
 })();
 </script>
+
 </body></html>
