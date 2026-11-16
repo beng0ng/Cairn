@@ -1,0 +1,2002 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cairn</title>
+<meta name="description" content="Cairn finds the hand-offs your AI agent could handle itself, fixes them as tested pull requests, and keeps judgment calls with your team.">
+<meta property="og:title" content="Cairn">
+<meta property="og:description" content="Cairn finds the hand-offs your AI agent could handle itself, fixes them as tested pull requests, and keeps judgment calls with your team.">
+<meta property="og:image" content="https://beng0ng.github.io/Cairn/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+</head><body>
+/* Layout: 1200px content on a 12-column grid, long editorial homepage, product-window mockups as the imagery. */
+/* Palette built in OKLCH: one green-tinted neutral ramp (hue ~165), accents at matched lightness so none shouts. Dark is the default; light is on the toggle. */
+:root{
+  --bg:#0B0E0D; --bg-2:#0F1312; --card:#121715; --card-2:#1A201E; --border:#232B28; --ink:#E9EEEB; --gray:#98A39E; --muted:#56615C;
+  --green:#3DBA80; --green-text:#6FD9A5; --green-fill:#11241B; --on-green:#03130A;
+  --blue:#93A1F5; --blue-fill:#151A31; --clay:#EE9580; --clay-fill:#2A1813;
+  --glow-a:rgba(61,186,128,.16); --glow-b:rgba(147,161,245,.10);
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 60px -24px rgba(0,0,0,.75);
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --radius:16px; --wrap:1200px; --section:clamp(80px,10vw,120px);
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#F3F4F1; --bg-2:#ECEEEA; --card:#FCFCFA; --card-2:#EFF1ED; --border:#DEE1DC; --ink:#151917; --gray:#5D6561; --muted:#9AA19D;
+  --green:#2F7A55; --green-text:#26694A; --green-fill:#E3F0E8; --on-green:#FFFFFF;
+  --blue:#4655A6; --blue-fill:#ECEEFA; --clay:#9E4A3C; --clay-fill:#F6E7E3;
+  --glow-a:rgba(47,122,85,.10); --glow-b:rgba(70,85,166,.07);
+  --shadow:0 1px 2px rgba(21,25,23,.04),0 16px 40px -18px rgba(21,25,23,.22);
+  color-scheme:light;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--font);-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+a{color:var(--blue);text-decoration-thickness:1px;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-weight:600;letter-spacing:-.02em;line-height:1.08;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,6vw,68px)}
+h2{font-size:clamp(32px,4.4vw,52px)}
+h3{font-size:20px;letter-spacing:-.01em;line-height:1.3}
+p{margin:0}
+.wrap{max-width:calc(var(--wrap) + 2*max(24px, env(safe-area-inset-left,0px)));margin:0 auto;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+@media (max-width:480px){.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}}
+.section{padding-block:var(--section)}
+.section + .section{border-top:1px solid var(--border)}
+.lede{font-size:clamp(18px,1.6vw,20px);color:var(--gray);max-width:62ch}
+.label{font:600 12px/1 var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--green-text)}
+.small{font-size:14px;color:var(--gray)}
+.mono{font-family:var(--mono)}
+.stack{display:grid;gap:20px}
+.head{display:grid;gap:18px;max-width:780px;margin-bottom:56px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 22px;border-radius:10px;font:500 16px/1 var(--font);text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.btn-primary{background:var(--green);color:var(--on-green)}
+.btn-primary:hover{background:#286A4A}
+.btn-secondary{background:transparent;color:var(--ink);border-color:var(--border)}
+.btn-secondary:hover{border-color:var(--muted)}
+.btn-sm{min-height:40px;padding:0 16px;font-size:15px}
+.btn svg{flex:none}
+.btn-row{display:flex;flex-wrap:wrap;gap:12px}
+
+/* Nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid transparent;transition:border-color .25s}
+.nav.scrolled{border-bottom-color:var(--border)}
+.nav-in{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:68px;gap:16px}
+.wordmark{display:inline-flex;align-items:center;gap:9px;color:var(--ink);text-decoration:none;font-weight:600;font-size:22px;letter-spacing:-.035em}
+.wordmark svg{display:block}
+.nav-links{display:flex;gap:4px}
+.nav-links a{color:var(--gray);text-decoration:none;font-size:15px;font-weight:500;padding:8px 12px;border-radius:8px}
+.nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--ink)}
+.nav-links a[aria-current="page"]{background:var(--card);box-shadow:inset 0 0 0 1px var(--border)}
+.nav-right{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;display:inline-grid;place-items:center;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--ink);cursor:pointer}
+.menu-btn{display:none}
+.mobile-menu{display:none}
+@media (max-width:900px){.nav-right .btn{display:none}}
+@media (max-width:1120px){
+  .nav-in{grid-template-columns:1fr auto}
+  .nav-links{display:none}
+  .menu-btn{display:inline-grid}
+  .mobile-menu{display:block;border-top:1px solid var(--border);padding-block:12px 20px}
+  .mobile-menu[hidden]{display:none}
+  .mobile-menu a:not(.btn){display:block;padding:12px 0;color:var(--ink);text-decoration:none;font-size:18px;font-weight:500;border-bottom:1px solid var(--border)}
+  .mobile-menu .btn{margin-top:16px;width:100%}
+}
+
+/* Hero */
+.hero{padding-block:clamp(48px,7vw,96px) var(--section)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:56px;align-items:center}
+.hero-copy{display:grid;gap:24px}
+.hero-copy .lede{max-width:54ch}
+.built-for{font-size:15px;color:var(--gray);display:flex;gap:10px;align-items:center}
+.built-for::before{content:"";width:18px;height:1px;background:var(--muted)}
+@media (max-width:900px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:40px}}
+
+/* Product window */
+.window{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.window-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);font:500 12px/1 var(--mono);color:var(--gray)}
+.window-bar .dots{display:flex;gap:6px}
+.window-bar .dots i{width:9px;height:9px;border-radius:50%;background:var(--border);display:block}
+.window-bar .tag{margin-left:auto;font-family:var(--font);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.window-body{padding:20px}
+
+/* Hand-off map */
+.map svg{display:block;width:100%;height:auto;overflow:visible}
+.map text{font-family:var(--font)}
+.map .node rect{fill:var(--blue-fill);stroke:var(--blue);stroke-width:1.2}
+.map .node text{fill:var(--ink);font-size:13px;font-weight:500}
+.map .node .num{fill:var(--blue);font:500 11px var(--mono)}
+.map .spine{stroke:var(--blue);stroke-width:1.2;opacity:.5}
+.map .ho .link{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 4;fill:none;transition:stroke .6s}
+.map .ho rect{fill:var(--card);stroke:var(--border);stroke-width:1.2;transition:fill .6s,stroke .6s}
+.map .ho .reason{fill:var(--ink);font-size:12.5px;font-weight:500}
+.map .ho .status{fill:var(--gray);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;transition:fill .6s}
+.map .ho .dot{fill:var(--muted);transition:fill .6s}
+.map .ho{transition:opacity .5s,transform .5s}
+.map.anim .ho{opacity:0;transform:translateX(-8px)}
+.map .ho.in{opacity:1;transform:none}
+.map .ho.test .link{stroke:var(--green)} .map .ho.test rect{fill:var(--green-fill);stroke:var(--green)} .map .ho.test .status,.map .ho.test .dot{fill:var(--green-text)}
+.map .ho.keep .link{stroke:var(--clay)} .map .ho.keep rect{fill:var(--clay-fill);stroke:var(--clay)} .map .ho.keep .status,.map .ho.keep .dot{fill:var(--clay)}
+.map .axis{fill:var(--gray);font:500 10.5px var(--mono);letter-spacing:.04em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;font-size:13px;color:var(--gray)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend i{width:10px;height:10px;border-radius:3px;display:block}
+.legend .g{background:var(--green)} .legend .r{background:var(--clay)} .legend .b{background:var(--blue)}
+
+/* Cards */
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+@media (max-width:980px){.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:820px){.grid-3,.grid-2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.grid-4{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:grid;gap:12px;align-content:start;min-width:0}
+.card p{color:var(--gray)}
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 11.5px/1 var(--mono);color:var(--gray);border:1px solid var(--border);border-radius:999px;padding:6px 10px;width:max-content;max-width:100%}
+.chip.g{color:var(--green-text);border-color:color-mix(in srgb,var(--green) 40%,transparent);background:var(--green-fill)}
+.chip.r{color:var(--clay);border-color:color-mix(in srgb,var(--clay) 40%,transparent);background:var(--clay-fill)}
+.source{margin-top:28px;font-size:13px;color:var(--gray)}
+
+/* Steps + sticky window */
+.steps-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px;align-items:start}
+.steps{list-style:none;margin:0;padding:0;display:grid}
+.step{padding:28px 0 28px 20px;border-left:2px solid var(--border);cursor:pointer;transition:border-color .3s;display:grid;gap:8px}
+.step h3{transition:color .3s;color:var(--gray)}
+.step p{color:var(--gray)}
+.step.active{border-left-color:var(--green)}
+.step.active h3{color:var(--ink)}
+.step button{all:unset;cursor:pointer;display:grid;gap:8px}
+.step button:focus-visible{outline:2px solid var(--blue);outline-offset:6px;border-radius:6px}
+.sticky{position:sticky;top:calc(96px + env(safe-area-inset-top,0px))}
+.pane{display:none}
+.pane.on{display:block;animation:paneIn .45s ease}
+@keyframes paneIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (max-width:900px){
+  .steps-grid{grid-template-columns:minmax(0,1fr);gap:32px}
+  .sticky{position:static}
+  .steps-grid .sticky{order:-1}
+}
+
+/* Mock UI inside windows */
+.ui-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
+.ui-title b{font-weight:600;font-size:15px}
+.ui-title span{font-size:12px;color:var(--gray)}
+.ui-table{width:100%;border-collapse:collapse;font-size:13px}
+.ui-table th{font:500 11px var(--font);letter-spacing:.06em;text-transform:uppercase;color:var(--gray);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+.ui-table td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.ui-table tr:last-child td{border-bottom:0}
+.ui-table .n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:12px}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;min-width:60px}
+.bar i{display:block;height:100%;border-radius:4px}
+.code{font:400 12.5px/1.7 var(--mono);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;white-space:pre;color:var(--ink)}
+.code .add{color:var(--green-text)} .code .del{color:var(--clay)} .code .c{color:var(--gray)}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.kv div{border:1px solid var(--border);border-radius:10px;padding:12px;display:grid;gap:4px}
+.kv b{font:600 20px/1.1 var(--font);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kv span{font-size:11.5px;color:var(--gray)}
+.pass{display:inline-flex;align-items:center;gap:8px;color:var(--green-text);font-weight:500;font-size:13px}
+.pass::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green)}
+.example-note{font-size:11.5px;color:var(--gray);margin-top:14px}
+@media (max-width:520px){.kv{grid-template-columns:minmax(0,1fr)}}
+
+/* Split */
+.split{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+.split > div{padding:32px;display:grid;gap:18px;align-content:start}
+.split > div + div{border-left:1px solid var(--border)}
+.split ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.split li{display:flex;gap:12px;align-items:center;font-weight:500}
+.split li::before{content:"";width:10px;height:10px;border-radius:3px;flex:none}
+.split .t li::before{background:var(--green)}
+.split .k li::before{background:var(--clay)}
+.split .hd{display:flex;align-items:center;justify-content:space-between;gap:12px}
+@media (max-width:700px){.split{grid-template-columns:1fr}.split > div + div{border-left:0;border-top:1px solid var(--border)}}
+
+/* Replay panel */
+.replay{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.replay h4{margin:0 0 10px;font:600 12px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--gray)}
+.runs{display:grid;gap:6px}
+.run{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:center;font:400 11.5px var(--mono);color:var(--gray)}
+.run .track{height:22px;border-radius:6px;background:var(--bg);border:1px solid var(--border);position:relative;display:flex;align-items:center;padding:0 8px;gap:4px;overflow:hidden}
+.run .track i{height:6px;flex:1;border-radius:3px;background:color-mix(in srgb,var(--blue) 35%,transparent)}
+.run .track b{position:absolute;right:6px;font:600 9.5px var(--font);letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:4px}
+.run .ho-flag{background:var(--clay-fill);color:var(--clay)}
+.run .ok-flag{background:var(--green-fill);color:var(--green-text)}
+.run .same-flag{background:var(--card);color:var(--gray);border:1px solid var(--border)}
+.replay-foot{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);font-size:13px}
+@media (max-width:620px){.replay{grid-template-columns:1fr}}
+
+.two-col{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px;align-items:center}
+@media (max-width:900px){.two-col{grid-template-columns:minmax(0,1fr);gap:36px}}
+
+/* Metric tiles */
+.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;display:grid;gap:14px;align-content:start}
+.metric .unit{font:500 12px var(--mono);color:var(--green-text);border-bottom:1px solid var(--border);padding-bottom:14px}
+.metric h3{font-size:19px}
+.metric p{color:var(--gray);font-size:15.5px}
+
+/* Compare table */
+.compare{width:100%;border-collapse:separate;border-spacing:0;min-width:640px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.compare th,.compare td{padding:18px 22px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;font-size:15.5px}
+.compare tr:last-child td,.compare tr:last-child th{border-bottom:0}
+.compare thead th{font-weight:600;font-size:15px}
+.compare tbody th{font-weight:500;color:var(--gray);width:24%}
+.compare td{color:var(--gray)}
+.compare .us{background:var(--green-fill);color:var(--ink)}
+.compare thead .us{color:var(--green-text)}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius)}
+
+/* Pilot band */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;counter-reset:f;margin-block:40px 32px}
+.flow li{list-style:none;padding:24px 28px 24px 0;display:grid;gap:10px;position:relative;border-top:2px solid var(--green)}
+.flow li + li{padding-left:28px}
+.flow li::before{counter-increment:f;content:"0" counter(f);font:600 12px var(--font);letter-spacing:.14em;color:var(--green-text)}
+.flow p{font-size:18px;font-weight:500;letter-spacing:-.01em}
+.flow{padding:0}
+@media (max-width:820px){.flow{grid-template-columns:1fr}.flow li + li{padding-left:0}}
+
+/* Industries */
+.industry{text-decoration:none;color:inherit;transition:border-color .2s,transform .2s}
+.industry:hover{border-color:var(--muted)}
+.industry .go{margin-top:8px;color:var(--blue);font-weight:500;font-size:15px}
+.industry h3{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+
+/* FAQ */
+.faq{border-top:1px solid var(--border)}
+.faq details{border-bottom:1px solid var(--border)}
+.faq summary{list-style:none;cursor:pointer;padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:24px;font-size:18px;font-weight:500;letter-spacing:-.01em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";width:12px;height:12px;flex:none;border-right:1.6px solid var(--gray);border-bottom:1.6px solid var(--gray);transform:rotate(45deg) translate(-3px,-3px);transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(225deg) translate(-3px,-3px)}
+.faq details p{padding:0 0 24px;color:var(--gray);max-width:70ch}
+.faq-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:64px}
+@media (max-width:900px){.faq-grid{grid-template-columns:minmax(0,1fr);gap:24px}}
+
+/* CTA + footer */
+.cta{text-align:center;display:grid;justify-items:center;gap:28px}
+.cta h2{max-width:20ch}
+.cta-stones{color:var(--muted)}
+footer{border-top:1px solid var(--border);padding-block:56px 40px;font-size:14px;color:var(--gray)}
+.foot{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px}
+.foot nav{display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:flex-end;align-content:start}
+.foot nav a{color:var(--ink);text-decoration:none}
+.foot nav a:hover{text-decoration:underline}
+.foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
+@media (max-width:700px){.foot{grid-template-columns:1fr}.foot nav{justify-content:flex-start}}
+
+/* Sub pages */
+.page-hero{padding-block:clamp(48px,7vw,96px) clamp(56px,7vw,88px);display:grid;gap:22px;max-width:860px}
+.detail{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px;align-items:start;padding-block:72px;border-top:1px solid var(--border)}
+.detail .stack p{color:var(--gray)}
+.detail ul{margin:0;padding-left:20px;color:var(--gray);display:grid;gap:8px}
+@media (max-width:900px){.detail{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:56px}}
+.types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.types div{border:1px solid var(--border);border-radius:12px;padding:16px;display:grid;gap:8px;align-content:start}
+.types p{font-size:13.5px;color:var(--gray)}
+@media (max-width:560px){.types{grid-template-columns:1fr}}
+.note{background:var(--blue-fill);border-radius:var(--radius);padding:28px 32px;display:grid;gap:12px}
+.note h3{color:var(--ink)}
+.note ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.pr{display:grid;gap:14px}
+.pr-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pr-head b{font-size:15px;font-weight:600}
+.badge{font:600 11px/1 var(--font);letter-spacing:.04em;padding:6px 9px;border-radius:999px;background:var(--green);color:var(--on-green)}
+.pr-body{font:400 12.5px/1.75 var(--mono);color:var(--ink);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto}
+.pr-body h5{margin:0;font:600 12.5px var(--mono);color:var(--gray)}
+.pr-body ul{margin:2px 0 10px;padding-left:18px}
+
+/* Timeline */
+.timeline{display:grid;grid-template-columns:1fr 3fr 2fr;gap:6px;margin-top:8px}
+.timeline div{border-radius:10px;padding:16px;display:grid;gap:6px;align-content:start}
+.timeline div:nth-child(1){background:var(--blue-fill)}
+.timeline div:nth-child(2){background:var(--green-fill)}
+.timeline div:nth-child(3){background:var(--card);border:1px solid var(--border)}
+.timeline b{font:600 12px var(--font);letter-spacing:.1em;text-transform:uppercase;color:var(--green-text)}
+.timeline div:nth-child(1) b{color:var(--blue)}
+.timeline span{font-size:15px;font-weight:500}
+.weeks{display:grid;grid-template-columns:repeat(6,1fr);font:500 11px var(--mono);color:var(--gray);margin-top:10px}
+@media (max-width:620px){.timeline{grid-template-columns:1fr}.weeks{display:none}}
+
+/* Form */
+.form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:var(--shadow);display:grid;gap:18px}
+.field{display:grid;gap:7px}
+.field label{font-size:14px;font-weight:500}
+.field .hint{font-size:12.5px;color:var(--gray);font-weight:400}
+.field input,.field select,.field textarea{font:400 16px/1.4 var(--font);color:var(--ink);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;width:100%;min-width:0}
+.field textarea{min-height:96px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+.field .err{font-size:13px;color:var(--clay)}
+.field.bad input,.field.bad select,.field.bad textarea{border-color:var(--clay)}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:560px){.row-2{grid-template-columns:1fr}.form{padding:22px}}
+.sent{display:grid;gap:14px;text-align:left}
+.sent .check{width:44px;height:44px;border-radius:50%;background:var(--green-fill);display:grid;place-items:center;color:var(--green-text)}
+
+/* Team */
+.person{display:grid;gap:14px;align-content:start}
+.avatar{aspect-ratio:1/1;max-width:100%;border-radius:var(--radius);background:var(--card);border:1px dashed var(--muted);display:grid;place-items:center;color:var(--muted);font:500 13px var(--font)}
+.person b{font-size:17px;font-weight:600}
+.person p{color:var(--gray);font-size:15px}
+.todo{outline:1.5px dashed var(--muted);outline-offset:4px;border-radius:6px}
+
+/* Modal */
+dialog.modal{border:0;padding:0;background:transparent;max-width:min(960px,calc(100vw - 32px));width:100%;color:var(--ink)}
+dialog.modal::backdrop{background:rgba(16,18,17,.72);backdrop-filter:blur(4px)}
+.modal-in{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+.modal-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 12px 12px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:500}
+.video{aspect-ratio:16/9;background:#050706;color:#E9EEEB;display:grid;place-items:center;text-align:center;padding:24px;max-width:100%}
+.video .play{width:72px;height:72px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;margin:0 auto 18px;opacity:.85}
+.video p{max-width:46ch;font-size:15px;opacity:.8}
+
+/* Reveal */
+.pre{opacity:0;transform:translateY(10px)}
+.rise{transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){.pre{opacity:1;transform:none}.rise,.pane.on,.map .ho{transition:none;animation:none}}
+.view[hidden]{display:none!important}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:16px;top:16px;z-index:100;background:var(--card);padding:10px 14px;border-radius:8px}
+
+/* ===== v2: interactive field + sleeker surfaces ===== */
+#field{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+header.nav,main,footer{position:relative;z-index:1}
+header.nav{position:sticky}
+.section + .section{border-top:0}
+.section{position:relative}
+.section + .section::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(var(--wrap),calc(100% - 48px));height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent)}
+
+/* Floating pill nav */
+.nav{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:0;padding-top:12px}
+.nav.scrolled{border-bottom:0}
+.nav-in{height:60px;max-width:calc(var(--wrap) + 32px);padding-left:20px;padding-right:10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--border) 80%,transparent);background:color-mix(in srgb,var(--card) 72%,transparent);backdrop-filter:saturate(1.6) blur(16px);-webkit-backdrop-filter:saturate(1.6) blur(16px);transition:box-shadow .3s,background .3s}
+.nav.scrolled .nav-in{box-shadow:0 10px 30px -14px rgba(28,30,29,.28);background:color-mix(in srgb,var(--card) 84%,transparent)}
+@media (max-width:1264px){.nav-in{margin-left:16px;margin-right:16px}}
+.nav-links a{border-radius:999px;padding:8px 14px}
+.nav-links a[aria-current="page"]{background:var(--bg)}
+.icon-btn{border-radius:999px}
+.mobile-menu{margin:8px 16px 0;border:1px solid var(--border);border-radius:20px;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:8px 20px 20px}
+.mobile-menu a:not(.btn):last-of-type{border-bottom:0}
+
+/* Pill buttons with arrow */
+.btn{border-radius:999px}
+.btn-primary{box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 8px 20px -10px color-mix(in srgb,var(--green) 80%,transparent)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn .arrow{transition:transform .25s}
+.btn:hover .arrow{transform:translateX(3px)}
+.btn-secondary{background:color-mix(in srgb,var(--card) 70%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+
+/* Eyebrow pill */
+.eyebrow{display:inline-flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:7px 14px 7px 10px;border-radius:999px;border:1px solid var(--border);background:color-mix(in srgb,var(--card) 70%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 50%,transparent);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 45%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hero h1{font-size:clamp(42px,6.4vw,76px);letter-spacing:-.035em;line-height:1.02}
+h2{letter-spacing:-.03em}
+.hero-copy{gap:28px}
+
+/* Glass surfaces + cursor spotlight */
+.card,.metric,.window,.split,.form,.compare,.faq-card{background:color-mix(in srgb,var(--card) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.spot{position:relative;isolation:isolate}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;z-index:2;
+  background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--green) 9%,transparent),transparent 60%);
+  -webkit-mask:linear-gradient(#000,#000);}
+.spot::before{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;z-index:3;padding:1px;
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--green) 70%,transparent),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.spot:hover::after,.spot:hover::before{opacity:1}
+.card.spot,.metric.spot{transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .35s}
+.card.spot:hover,.metric.spot:hover{transform:translateY(-3px)}
+.window{border-radius:18px}
+.card,.metric{border-radius:18px}
+.chip{background:transparent}
+@media (hover:none){.spot::before,.spot::after{display:none}}
+@media (prefers-reduced-motion:reduce){.eyebrow .pulse{animation:none}.card.spot:hover,.metric.spot:hover,.btn-primary:hover{transform:none}}
+.field-hint{position:absolute;right:max(24px,env(safe-area-inset-right,0px));bottom:24px;font:500 11px var(--mono);color:var(--muted);letter-spacing:.04em;pointer-events:none}
+@media (max-width:900px){.field-hint{display:none}}
+
+/* ===== v3: dark palette, logo, interactive showcases ===== */
+.hero-copy{grid-template-columns:minmax(0,1fr)}
+@media (max-width:480px){.eyebrow{font-size:10.5px;letter-spacing:.1em;gap:8px;padding:7px 12px 7px 10px}}
+header.nav{position:sticky;z-index:50}
+.btn-primary:hover{background:var(--green);filter:brightness(1.08)}
+.mark{width:30px;height:30px;border-radius:9px;background:var(--card-2);border:1px solid var(--border);display:inline-grid;place-items:center;flex:none;box-shadow:0 1px 0 rgba(255,255,255,.04) inset}
+.mark ellipse{fill:var(--ink)}.mark g{transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.mark .m2{opacity:.62}
+.mark .m3 ellipse{fill:var(--green-text)}
+.wordmark{gap:10px;font-size:21px;letter-spacing:-.045em}
+.wordmark:hover .m3{transform:translate(1px,-1.5px)}
+.wordmark:hover .m2{transform:translateX(-1px)}
+.cta .mark{width:56px;height:56px;border-radius:16px}
+.cta .mark svg{width:32px;height:32px}
+.hero{isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(640px 420px at 78% 38%,var(--glow-a),transparent 70%),radial-gradient(520px 380px at 12% 8%,var(--glow-b),transparent 70%)}
+.hero h1{background:linear-gradient(180deg,var(--ink) 50%,color-mix(in srgb,var(--ink) 62%,var(--bg)));-webkit-background-clip:text;background-clip:text;color:transparent}
+a.eyebrow{text-decoration:none;transition:border-color .25s}
+a.eyebrow:hover{border-color:var(--green)}
+a.eyebrow .arrow{transition:transform .25s}
+a.eyebrow:hover .arrow{transform:translateX(3px)}
+.built-for a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:3px}
+.built-for a:hover{text-decoration-color:var(--green-text)}
+.section:nth-of-type(even){background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg-2) 60%,transparent) 30%,transparent)}
+
+/* Map interactions */
+.map .ho{cursor:pointer;outline:none}
+.map .ho:hover rect,.map .ho:focus-visible rect,.map .ho.sel rect{stroke-width:2}
+.map .ho:focus-visible rect{stroke:var(--blue)}
+.map.has-sel .ho:not(.sel){opacity:.38}
+.map .ho{transition:opacity .35s,transform .5s}
+.map-detail{margin-top:14px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;display:grid;gap:6px;font-size:13.5px;color:var(--gray);min-height:104px;align-content:start;background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.map-detail b{color:var(--ink);font-weight:600}
+.map-detail .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.legend{align-items:center}
+.legend .mini{margin-left:auto}
+
+/* Shared controls */
+.mini{font:500 12.5px/1 var(--font);color:var(--ink);background:transparent;border:1px solid var(--border);border-radius:999px;padding:8px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;transition:border-color .2s,background .2s}
+.mini:hover{border-color:var(--muted)}
+.mini.primary{background:var(--green);color:var(--on-green);border-color:transparent}
+.mini.primary:hover{filter:brightness(1.08)}
+.mini.warn:hover{border-color:var(--clay);color:var(--clay)}
+.mini:disabled{opacity:.45;cursor:default;filter:none}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:2px;gap:2px}
+.seg button{font:500 12px/1 var(--font);color:var(--gray);background:transparent;border:0;border-radius:999px;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--card-2);color:var(--ink)}
+.pane-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12.5px;color:var(--gray);min-height:46px}
+.pane-foot .btns{display:flex;gap:8px;flex-wrap:wrap}
+.pane-msg{min-width:0;flex:1 1 180px}
+.pane-msg.bad{color:var(--clay)} .pane-msg.ok{color:var(--green-text)}
+
+.rv{opacity:0;transform:translateY(6px);transition:opacity .45s,transform .45s}
+.rv.in{opacity:1;transform:none}
+.ui-table.hov tbody tr{cursor:pointer;transition:background .2s,opacity .3s}
+.ui-table.hov tbody tr:hover td{background:color-mix(in srgb,var(--green) 7%,transparent)}
+.ui-table tr.sel td{background:var(--green-fill)}
+.ui-table tr.dim{opacity:.3}
+.bar i{width:0;transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.pct{color:var(--gray);margin-left:6px}
+
+.code .ln{display:block;opacity:0;transition:opacity .3s}
+.code .ln.in{opacity:1}
+.code .ln::before{display:inline-block;width:2.2ch;color:var(--gray)}
+.code .ln.add{color:var(--green-text)} .code .ln.add::before{content:"+";color:var(--green-text)}
+.code .ln.del{color:var(--clay)} .code .ln.del::before{content:"-";color:var(--clay)}
+.code .ln.ctx::before,.code .ln.c::before{content:" "}
+.code .ln.c{color:var(--gray)}
+.code.result .ln.del{display:none}
+.code.result .ln.add{color:var(--ink)}
+.code.result .ln::before{content:" "}
+
+.prog{height:6px;border-radius:3px;background:var(--border);overflow:hidden;margin-top:16px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--green-text));border-radius:3px}
+.st{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--gray);white-space:nowrap}
+.ic{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--muted);flex:none;display:inline-grid;place-items:center;color:var(--on-green)}
+.ic svg{opacity:0}
+.spin .ic{border-color:var(--border);border-top-color:var(--green-text);animation:spin .8s linear infinite}
+.ok .ic{background:var(--green);border-color:var(--green)} .ok .ic svg{opacity:1}
+.bad .ic{background:var(--clay);border-color:var(--clay)}
+.st.ok{color:var(--green-text)} .st.bad{color:var(--clay)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.checks{display:grid;gap:9px;margin-top:2px}
+.chk{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);transition:color .3s}
+.chk.ok{color:var(--ink)}
+.badge{transition:background .3s}
+.badge.merged{background:var(--blue);color:var(--bg)}
+.kv b{transition:color .3s}
+
+.run .track i{transform:scaleX(0);transform-origin:left;transition:transform .55s cubic-bezier(.2,.7,.2,1)}
+.run .track b{opacity:0;transition:opacity .3s}
+.run.done .track i{transform:scaleX(1)}
+.run.done .track b{opacity:1}
+.run{transition:opacity .3s}
+.run .track{transition:border-color .2s}
+.run.hl .track{border-color:var(--green-text)}
+.replay[data-hl] .run:not(.hl){opacity:.45}
+
+.types div{cursor:pointer;transition:border-color .25s,background .25s}
+.types div:hover{border-color:var(--muted)}
+.types div:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.types .back{display:none;color:var(--ink)!important}
+.types .flip{background:color-mix(in srgb,var(--card-2) 60%,transparent)}
+.types .flip .front{display:none}
+.types .flip .back{display:block}
+.types .tip{font-size:11.5px;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){
+  .rv,.code .ln,.bar i,.run .track i,.run .track b,.mark g{transition:none}
+  .spin .ic{animation:none}
+}
+
+/* ===== v4: page transitions + sub pages ===== */
+.sub-hero{position:relative;isolation:isolate;padding-block:clamp(48px,7vw,96px) clamp(40px,6vw,72px)}
+.sub-hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(620px 380px at 70% 20%,var(--glow-a),transparent 70%),radial-gradient(480px 340px at 8% 0%,var(--glow-b),transparent 70%)}
+.sub-hero-in{display:grid;gap:22px;max-width:900px}
+.sub-hero h1{font-size:clamp(40px,5.6vw,68px);letter-spacing:-.035em;line-height:1.04}
+.sub-hero h1,.h1s{background:linear-gradient(180deg,var(--ink) 50%,color-mix(in srgb,var(--ink) 62%,var(--bg)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub-hero .h1s{font-size:clamp(36px,4.6vw,56px)}
+.h2s{font-size:clamp(28px,3.4vw,40px)}
+
+.stepbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);z-index:40;padding-block:4px 8px}
+.stepbar-in{display:flex;gap:4px;overflow-x:auto;padding:5px;border:1px solid var(--border);border-radius:999px;background:color-mix(in srgb,var(--card) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);width:max-content;max-width:100%;scrollbar-width:none;box-shadow:0 10px 30px -18px rgba(0,0,0,.5)}
+.stepbar-in::-webkit-scrollbar{display:none}
+.stepbar button{flex:none;font:500 13.5px/1 var(--font);color:var(--gray);background:transparent;border:0;border-radius:999px;padding:10px 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;transition:background .25s,color .25s}
+.stepbar button:hover{color:var(--ink)}
+.stepbar button span{font:500 11px var(--mono);color:var(--muted);transition:color .25s}
+.stepbar button[aria-current="step"]{background:var(--green-fill);color:var(--green-text)}
+.stepbar button[aria-current="step"] span{color:var(--green-text)}
+#howDetails .detail{scroll-margin-top:170px}
+.sec-grid .card{padding:22px}
+
+button.card.pick{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+.pick[aria-pressed="true"]{border-color:var(--green-text);background:color-mix(in srgb,var(--green-fill) 70%,transparent)}
+.pick:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+#logiMapWin{scroll-margin-top:110px}
+
+.tl{display:grid;gap:12px}
+.tl-track{position:relative;height:6px;border-radius:3px;background:var(--border);margin-top:6px}
+.tl-fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--green-text));transition:width .9s cubic-bezier(.4,0,.2,1)}
+.tl-dot{position:absolute;top:50%;left:0;width:14px;height:14px;border-radius:50%;background:var(--green-text);box-shadow:0 0 0 5px color-mix(in srgb,var(--green) 25%,transparent);transform:translate(-50%,-50%);transition:left .9s cubic-bezier(.4,0,.2,1)}
+.tl-weeks{display:grid;grid-template-columns:repeat(6,1fr);font:500 11px var(--mono);color:var(--muted)}
+.tl-phases{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.tl-phases button{text-align:left;font:inherit;color:var(--ink);background:color-mix(in srgb,var(--card) 82%,transparent);border:1px solid var(--border);border-radius:12px;padding:14px;display:grid;gap:4px;cursor:pointer;transition:border-color .25s,background .25s;min-width:0}
+.tl-phases button:hover{border-color:var(--muted)}
+.tl-phases b{font:600 11.5px/1.2 var(--font);letter-spacing:.1em;text-transform:uppercase;color:var(--gray)}
+.tl-phases span{font-size:15px;font-weight:500}
+.tl-phases button[aria-selected="true"]{border-color:var(--green-text);background:var(--green-fill)}
+.tl-phases button[aria-selected="true"] b{color:var(--green-text)}
+.tl-detail{border:1px solid var(--border);border-radius:14px;padding:18px 20px;background:color-mix(in srgb,var(--card) 82%,transparent);min-height:156px}
+.tl-detail b{font-weight:600}
+.tl-detail ul{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px;color:var(--gray)}
+.tl-detail li{display:flex;gap:10px}
+.tl-detail li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--green-text);margin-top:9px}
+.tl-detail ul li{animation:viewIn .45s cubic-bezier(.2,.7,.2,1) both}
+.tl-detail ul li:nth-child(2){animation-delay:.07s} .tl-detail ul li:nth-child(3){animation-delay:.14s}
+@media (max-width:620px){.tl-phases{grid-template-columns:1fr}.tl-phases button{grid-column:auto!important}.tl-weeks{display:none}}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:10px;color:var(--gray)}
+.ticks li{display:flex;gap:10px}
+.ticks li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--green-text);margin-top:10px}
+.pilot-grid{align-items:start;padding-bottom:var(--section)}
+@media (min-width:901px){.pilot-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px}}
+.detail.wide{grid-template-columns:minmax(0,1fr);gap:32px}
+.form-sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 96px)}
+@media (max-width:900px){.form-sticky{position:static}}
+
+.pnum{font:500 12px var(--mono);color:var(--green-text)}
+.contact-card{gap:18px}
+.contact-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:19px}
+.avatar{background:linear-gradient(135deg,var(--card-2),color-mix(in srgb,var(--card) 60%,transparent))}
+
+.route-bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;height:2px;width:0;background:linear-gradient(90deg,var(--green-text),var(--blue));z-index:70;opacity:0;pointer-events:none}
+.route-bar.go{opacity:1;width:72%;transition:width .3s ease}
+.route-bar.done{opacity:0;width:100%;transition:width .2s ease,opacity .4s ease .15s}
+main{transition:opacity .2s ease,transform .2s ease,filter .2s ease}
+main.leaving{opacity:0;transform:translateY(-8px);filter:blur(6px)}
+main.entering .view:not([hidden]) > *{animation:viewIn .7s cubic-bezier(.2,.7,.2,1) both}
+main.entering .view:not([hidden]) > :nth-child(2){animation-delay:.07s}
+main.entering .view:not([hidden]) > :nth-child(3){animation-delay:.14s}
+main.entering .view:not([hidden]) > :nth-child(n+4){animation-delay:.2s}
+@keyframes viewIn{from{opacity:0;transform:translateY(16px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@media (prefers-reduced-motion:reduce){
+  main,main.leaving{transition:none;opacity:1;transform:none;filter:none}
+  main.entering .view:not([hidden]) > *,.tl-detail ul li{animation:none}
+  .tl-fill,.tl-dot{transition:none}
+}
+
+/* ===== v5: methodology pages + links ===== */
+.tag-link{margin-left:auto;font:500 11.5px var(--font);color:var(--green-text);text-decoration:none;letter-spacing:.02em;padding:4px 9px;border-radius:999px;border:1px solid transparent;transition:border-color .2s}
+.tag-link:hover{border-color:var(--border)}
+a.linkcard{text-decoration:none;color:inherit;cursor:pointer}
+a.linkcard:hover{border-color:var(--muted)}
+.more{font-size:14px;font-weight:500;color:var(--green-text);text-decoration:none;display:inline-flex;gap:6px;align-items:center;margin-top:4px;width:max-content;max-width:100%}
+.more span{transition:transform .25s}
+a:hover > .more span,.more:hover span{transform:translateX(3px)}
+.split li a{color:inherit;text-decoration:none;border-bottom:1px dashed var(--muted);transition:color .2s,border-color .2s}
+.split li a:hover{color:var(--green-text);border-color:var(--green-text)}
+.step-more{display:none;font-size:14px;font-weight:500;color:var(--green-text);text-decoration:none;width:max-content}
+.step.active .step-more{display:inline-block}
+.step-more:hover{text-decoration:underline}
+.crumbs{display:flex;gap:8px;font-size:13px;color:var(--gray);flex-wrap:wrap}
+.crumbs a{color:var(--gray);text-decoration:none}
+.crumbs a:hover{color:var(--ink)}
+.sibs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.sibs a{font:500 13px/1 var(--font);color:var(--gray);text-decoration:none;padding:9px 13px;border-radius:999px;border:1px solid var(--border);background:color-mix(in srgb,var(--card) 70%,transparent);transition:color .2s,border-color .2s}
+.sibs a:hover{color:var(--ink);border-color:var(--muted)}
+.sibs a[aria-current]{color:var(--green-text);border-color:var(--green-text);background:var(--green-fill)}
+.method-grid{align-items:start;padding-bottom:40px}
+.method-visual{position:sticky;top:calc(env(safe-area-inset-top,0px) + 100px);min-width:0}
+@media (max-width:900px){.method-visual{position:static}}
+.msteps{list-style:none;margin:0;padding:0;display:grid}
+.msteps li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:18px 0;border-top:1px solid var(--border)}
+.msteps li:last-child{border-bottom:1px solid var(--border)}
+.mnum{font:500 12px var(--mono);color:var(--green-text);padding-top:4px}
+.msteps b{font-weight:600;font-size:17px;letter-spacing:-.01em}
+.msteps p{color:var(--gray);margin-top:4px}
+.team-line{color:var(--gray)}
+.team-line b{color:var(--ink);font-weight:600}
+.mcard{gap:14px}
+.mcard p{color:var(--ink)}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.verdict{font:600 12px var(--font);letter-spacing:.06em;text-transform:uppercase}
+.verdict.g{color:var(--green-text)} .verdict.r{color:var(--clay)}
+.formula{white-space:pre-wrap;font-size:13.5px;line-height:1.7}
+.mnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:8px}
+.mnav .mini{text-decoration:none;padding:10px 14px}
+
+/* ===== v6: scroll-through next page ===== */
+.next-band{position:relative;isolation:isolate;padding-block:clamp(72px,9vw,120px) clamp(56px,7vw,96px);text-align:center;overflow:hidden}
+.next-band::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(600px 300px at 50% 100%,var(--glow-a),transparent 70%);opacity:calc(.35 + var(--np,0)*.65)}
+.next-band .wrap{display:grid;justify-items:center;gap:18px}
+.next-band .nb-label{font:600 12px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
+.next-band a.nb-title{font-size:clamp(36px,6vw,72px);font-weight:600;letter-spacing:-.035em;line-height:1.02;color:var(--ink);text-decoration:none;text-wrap:balance;max-width:16ch;transform:translateY(calc((1 - var(--np,0))*10px));transition:color .25s}
+.next-band a.nb-title:hover{color:var(--green-text)}
+.nb-track{width:min(280px,70vw);height:4px;border-radius:2px;background:var(--border);overflow:hidden}
+.nb-track i{display:block;height:100%;width:calc(var(--np,0)*100%);background:linear-gradient(90deg,var(--green),var(--green-text));border-radius:2px}
+.nb-hint{font-size:13px;color:var(--muted);display:inline-flex;gap:8px;align-items:center}
+.nb-hint svg{animation:nbBob 1.8s ease-in-out infinite}
+@keyframes nbBob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.nb-hint svg{animation:none}.next-band a.nb-title{transform:none}}
+
+/* ===== v7: compact layout, logo, page curtain ===== */
+:root{--section:clamp(56px,7vw,88px)}
+body{font-size:16px}
+h2{font-size:clamp(28px,3.4vw,42px)}
+.hero{padding-block:clamp(28px,4.5vw,60px) var(--section)}
+.hero h1{font-size:clamp(38px,5.2vw,62px)}
+.sub-hero{padding-block:clamp(32px,5vw,60px) clamp(24px,4vw,44px)}
+.sub-hero h1{font-size:clamp(34px,4.6vw,54px)}
+.sub-hero .h1s{font-size:clamp(32px,4vw,48px)}
+.sub-hero-in,.hero-copy{gap:18px}
+.lede{font-size:clamp(16.5px,1.35vw,18px)}
+.head{margin-bottom:32px;gap:12px}
+.hero-grid,.steps-grid,.two-col{gap:44px}
+.card{padding:22px;gap:10px}
+.metric{padding:20px;gap:10px}
+.step{padding:16px 0 16px 18px}
+.detail{padding-block:44px;gap:44px}
+.window-body{padding:16px 18px}
+.split > div{padding:24px}
+.compare th,.compare td{padding:13px 18px;font-size:15px}
+.faq summary{padding:16px 0;font-size:16.5px}
+.flow{margin-block:24px 22px}
+.flow li{padding-block:18px}
+.cta{gap:20px}
+.next-band{padding-block:clamp(44px,6vw,76px) clamp(36px,5vw,60px)}
+.next-band a.nb-title{font-size:clamp(32px,5vw,56px)}
+footer{padding-block:36px 28px}
+.foot-bottom{margin-top:28px}
+.tl-detail{min-height:132px}
+.map-detail{min-height:92px}
+
+.wordmark{line-height:1;font-size:22px;letter-spacing:-.05em;gap:10px}
+.wm{display:inline-flex;align-items:baseline}
+.wm-i{position:relative;display:inline-block}
+.wm-i::after{content:"";position:absolute;left:50%;top:-.02em;width:.3em;height:.19em;border-radius:50%;background:var(--green-text);transform:translateX(-46%) rotate(-14deg);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.wordmark:hover .wm-i::after{transform:translate(-46%,-2px) rotate(-4deg)}
+.mark{width:30px;height:30px;border-radius:9px;border:0;background:linear-gradient(150deg,#4DCB91 0%,#2A8A5E 55%,#1C5E40 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,.18),0 6px 16px -8px rgba(61,186,128,.75)}
+.mark ellipse{fill:#F3FBF6}
+.mark .m2{opacity:1}
+.mark .m2 ellipse{fill-opacity:.78}
+.mark .m3 ellipse{fill:#0A2619}
+.cta .mark{width:56px;height:56px;border-radius:16px}
+.cta .mark svg{width:36px;height:36px}
+.tag-link{white-space:nowrap;flex:none}
+.window-bar{min-width:0}
+
+.curtain{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:var(--bg);pointer-events:none;clip-path:inset(100% 0 0 0);visibility:hidden}
+.curtain::before{content:"";position:absolute;inset:0;background:radial-gradient(520px 340px at 50% 55%,var(--glow-a),transparent 70%),radial-gradient(420px 300px at 50% 35%,var(--glow-b),transparent 70%)}
+.curtain.in{visibility:visible;clip-path:inset(0 0 0 0);transition:clip-path .45s cubic-bezier(.75,0,.2,1);pointer-events:auto}
+.curtain.out{visibility:visible;clip-path:inset(0 0 100% 0);transition:clip-path .5s cubic-bezier(.75,0,.2,1)}
+.curtain-in{position:relative;display:grid;justify-items:center;gap:16px;text-align:center;padding:0 24px}
+.curtain .mark{width:68px;height:68px;border-radius:20px}
+.curtain .mark svg{width:40px;height:40px}
+.curtain .mark g{opacity:0;transform:translateY(-16px)}
+.curtain.in .mark g,.curtain.out .mark g{animation:stoneDrop .5s cubic-bezier(.3,1.5,.5,1) forwards}
+.curtain .mark .m1{animation-delay:.12s!important}
+.curtain .mark .m2{animation-delay:.26s!important}
+.curtain .mark .m3{animation-delay:.4s!important}
+@keyframes stoneDrop{to{opacity:1;transform:none}}
+.c-label{font:600 11.5px var(--font);letter-spacing:.16em;text-transform:uppercase;color:var(--gray)}
+.c-title{font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1.1;color:var(--ink);max-width:18ch;text-wrap:balance}
+.c-line{width:120px;height:2px;border-radius:1px;background:var(--border);overflow:hidden}
+.c-line i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--green-text))}
+.curtain.in .c-line i{width:100%;transition:width .75s cubic-bezier(.4,0,.2,1) .1s}
+.curtain.out .c-line i{width:100%}
+
+/* v8: brand title + split pages */
+.brand-top{display:grid;gap:10px;margin-bottom:clamp(28px,4vw,48px)}
+.hero .brand-title{display:flex;align-items:center;gap:clamp(14px,1.6vw,24px);margin:0;font-size:clamp(72px,11.5vw,160px);font-weight:600;letter-spacing:-.055em;line-height:.9;
+  background:linear-gradient(180deg,var(--ink) 40%,color-mix(in srgb,var(--ink) 55%,var(--bg)));-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:viewIn .9s cubic-bezier(.2,.7,.2,1) both}
+.brand-title .mark{width:clamp(52px,8.4vw,118px);height:clamp(52px,8.4vw,118px);border-radius:clamp(14px,2.2vw,30px);-webkit-text-fill-color:initial}
+.brand-title .mark svg{width:62%;height:62%}
+.brand-sub{font:500 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hero-grid{align-items:start}
+.hero .hero-h{font-size:clamp(30px,3.6vw,46px);letter-spacing:-.03em;line-height:1.08;margin:0}
+.explore .pnum{margin-bottom:2px}
+@media (prefers-reduced-motion:reduce){.brand-title{animation:none}}
+</style>
+<canvas id="field" aria-hidden="true"></canvas>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="wordmark" href="#home" aria-label="cairn, home">
+      <span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><g class="m1"><ellipse cx="10" cy="15.6" rx="8.6" ry="2.7"/></g><g class="m2"><ellipse cx="9" cy="10.5" rx="6.3" ry="2.25" transform="rotate(-6 9 10.5)"/></g><g class="m3"><ellipse cx="11.4" cy="5.8" rx="4.4" ry="1.85" transform="rotate(8 11.4 5.8)"/></g></svg></span><span class="wm">ca<span class="wm-i">ı</span>rn</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#how-it-works" data-link="how-it-works">How it works</a>
+      <a href="#why-cairn" data-link="why-cairn">Why Cairn</a>
+      <a href="#results" data-link="results">Results</a>
+      <a href="#logistics" data-link="logistics">For logistics</a>
+      <a href="#pilot" data-link="pilot">Pilot</a>
+      <a href="#about" data-link="about">About</a>
+    </nav>
+    <div class="nav-right">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to dark mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="#pilot" data-cta="nav">Request a pilot</a>
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="wrap mobile-menu" id="mobileMenu" hidden>
+    <a href="#how-it-works">How it works</a>
+    <a href="#why-cairn">Why Cairn</a>
+    <a href="#results">Results</a>
+    <a href="#logistics">For logistics</a>
+    <a href="#pilot">Pilot</a>
+    <a href="#faq">Questions</a>
+    <a href="#about">About</a>
+    <a class="btn btn-primary" href="#pilot" data-cta="menu">Request a pilot</a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HOME ============ -->
+<div class="view" data-view="home">
+
+  <section class="hero" style="position:relative">
+    <span class="field-hint" aria-hidden="true">move or click anywhere</span>
+    <div class="wrap brand-top">
+      <h1 class="brand-title"><span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><g class="m1"><ellipse cx="10" cy="15.6" rx="8.6" ry="2.7"/></g><g class="m2"><ellipse cx="9" cy="10.5" rx="6.3" ry="2.25" transform="rotate(-6 9 10.5)"/></g><g class="m3"><ellipse cx="11.4" cy="5.8" rx="4.4" ry="1.85" transform="rotate(8 11.4 5.8)"/></g></svg></span>Cairn</h1>
+      <span class="brand-sub">Decision boundary infrastructure for AI agents</span>
+    </div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h2 class="hero-h">Your AI agent hands off work it could do itself. Cairn fixes that.</h2>
+        <p class="lede">Cairn maps every hand-off your agent makes to a person, fixes the ones it could handle, tests each fix on your past runs, and ships it as a pull request. Judgment calls stay with your team.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="#pilot" data-cta="hero">Request a pilot</a>
+          <button class="btn btn-secondary" type="button" data-demo>
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.25" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 5.2v5.6L11 8z" fill="currentColor"/></svg>
+            Watch the demo (100 s)
+          </button>
+        </div>
+        <p class="built-for"><span>Built for teams running their own agents in <a href="#logistics">logistics</a>, <a href="#pilot">insurance</a> and <a href="#pilot">healthcare</a>.</span></p>
+      </div>
+      <div class="window">
+        <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>hand-off map · order-changes agent<a class="tag-link" href="#method-map">Method →</a></div>
+        <div class="window-body">
+          <div class="map" data-map="home" role="group" aria-label="Hand-off map of an order-changes agent. Five workflow steps with four hand-offs to a person. Two are marked Cairn would test: the agent never read the order history, and it has no tool to edit the address. Two are kept with a person: a refund above the policy limit, and an upset customer."></div>
+          <div class="legend"><span><i class="b"></i>Agent step</span><span><i class="g"></i>Cairn would test</span><span><i class="r"></i>Kept with a person</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">The problem</span>
+        <h2>A quarter or more of your agent's work still lands on a person.</h2>
+        <p class="lede">The leading support agent reports resolving about three in four conversations on its own. Some of the rest need a person. Many don't: the agent just couldn't finish the job.</p>
+      </div>
+      <div class="grid-3">
+        <a class="card rise linkcard" href="#method-missing-evidence"><span class="chip">missing evidence</span><h3>A record it never read.</h3><p>The answer was one lookup away.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#method-tool-limit"><span class="chip">tool limit</span><h3>A tool it doesn't have.</h3><p>It can see the problem but can't act on it.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#method-policy-boundary"><span class="chip">policy boundary</span><h3>A rule it reads too cautiously.</h3><p>It escalates to stay safe.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">Explore</span>
+        <h2>Pick where to start.</h2>
+      </div>
+      <div class="grid-3 explore">
+        <a class="card rise linkcard" href="#how-it-works"><span class="pnum">01</span><h3>How it works</h3><p>Six steps from a hand-off to a tested pull request.</p><span class="more">See the steps <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#why-cairn"><span class="pnum">02</span><h3>Why Cairn</h3><p>What stays with people, and how Cairn differs from observability tools.</p><span class="more">See the difference <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#results"><span class="pnum">03</span><h3>Results</h3><p>How each fix is proven on past runs, and the four numbers you get.</p><span class="more">See the replay <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#logistics"><span class="pnum">04</span><h3>For logistics</h3><p>Where dispatch agents hand off, on a live map.</p><span class="more">See the map <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#pilot"><span class="pnum">05</span><h3>Pilot</h3><p>One workflow, about six weeks, measured savings.</p><span class="more">See the timeline <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#faq"><span class="pnum">06</span><h3>Questions</h3><p>Access, stack, pricing and what happens if a fix is wrong.</p><span class="more">Read the answers <span aria-hidden="true">→</span></span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap cta">
+      <span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><g class="m1"><ellipse cx="10" cy="15.6" rx="8.6" ry="2.7"/></g><g class="m2"><ellipse cx="9" cy="10.5" rx="6.3" ry="2.25" transform="rotate(-6 9 10.5)"/></g><g class="m3"><ellipse cx="11.4" cy="5.8" rx="4.4" ry="1.85" transform="rotate(8 11.4 5.8)"/></g></svg></span>
+      <h2>Find out which hand-offs your agent could handle.</h2>
+      <a class="btn btn-primary" href="#pilot" data-cta="final">Request a pilot</a>
+    </div>
+  </section>
+</div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<div class="view" data-view="how-it-works" hidden>
+  <section class="sub-hero">
+    <div class="wrap sub-hero-in">
+      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>How it works</span>
+      <h1>How Cairn turns hand-offs into tested fixes.</h1>
+      <p class="lede">Six steps, from the first read of your agent's runs to a check that keeps each fix in place. You approve every change.</p>
+    </div>
+  </section>
+  <nav class="stepbar" aria-label="Steps">
+    <div class="wrap"><div class="stepbar-in" id="stepbar"></div></div>
+  </nav>
+  <div class="wrap">
+    <div id="howDetails"></div>
+    <div class="detail">
+      <div class="stack"><span class="label">Why this matters</span><h2 class="h2s">The hand-offs left over are the expensive part.</h2></div>
+      <div class="stack">
+        <p>Leading support agents now resolve most conversations on their own. The rest go to a person, and in operational workflows each one costs minutes to hours of staff time.</p>
+        <p>Cairn works on that remainder: it separates the hand-offs your agent could have finished from the ones that should stay with your team.</p>
+      </div>
+    </div>
+    <div class="detail wide">
+      <div class="stack"><span class="label">Security</span><h2 class="h2s">Your team stays in control.</h2></div>
+      <div class="grid-3 sec-grid">
+        <div class="card rise"><span class="chip g">read-only</span><h3>Read-only access</h3><p>Cairn reads your agent's logs and repository. It never writes to them directly.</p></div>
+        <div class="card rise"><span class="chip g">pull requests</span><h3>No production changes</h3><p>Every change arrives as a pull request in your repository.</p></div>
+        <div class="card rise"><span class="chip g">your approval</span><h3>Your team merges</h3><p>Nothing ships until someone on your team approves it.</p></div>
+      </div>
+    </div>
+  </div>
+  <section class="section"><div class="wrap cta"><h2>Find out which hand-offs your agent could handle.</h2><a class="btn btn-primary" href="#pilot" data-cta="how-end">Request a pilot</a></div></section>
+</div>
+
+<!-- ============ WHY CAIRN ============ -->
+<div class="view" data-view="why-cairn" hidden>
+  <section class="sub-hero">
+    <div class="wrap sub-hero-in">
+      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Why Cairn</span>
+      <h1>Fix what your agent could have done. Keep what it shouldn't.</h1>
+      <p class="lede">Cairn works on the hand-offs to a person. It fixes the ones your agent could finish and draws an explicit line around the ones that need your team.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">What stays with people</span>
+        <h2>Some hand-offs should stay hand-offs.</h2>
+        <p class="lede">Chargebacks, sensitive cases and policy approvals belong with your team. Cairn draws that line explicitly, its decision boundary, and never automates past it.</p>
+      </div>
+      <div class="split rise">
+        <div class="t">
+          <div class="hd"><h3>Cairn tests</h3><span class="chip g">fixable</span></div>
+          <ul><li><a href="#method-missing-evidence">Missed lookups</a></li><li><a href="#method-tool-limit">Missing tools</a></li><li><a href="#method-policy-boundary">Unclear rules</a></li></ul>
+        </div>
+        <div class="k">
+          <div class="hd"><h3>Kept with a person</h3><span class="chip r">decision boundary</span></div>
+          <ul><li><a href="#method-policy-boundary">Policy approvals</a></li><li><a href="#method-human-judgment">Judgment calls</a></li><li><a href="#method-human-judgment">Sensitive cases</a></li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">How Cairn fits</span>
+        <h2>Observability tells you what went wrong. Cairn fixes what your agent could have done.</h2>
+      </div>
+      <div class="table-scroll rise">
+        <table class="compare">
+          <thead><tr><th scope="col"><span class="skip">Compared on</span></th><th scope="col">Observability tools</th><th scope="col">Runtime guardrails</th><th scope="col" class="us">Cairn</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Starts from</th><td>Errors and quality scores</td><td>Each action before it runs</td><td class="us">Each hand-off to a person</td></tr>
+            <tr><th scope="row">Output</th><td>Dashboards and alerts</td><td>Blocked actions</td><td class="us">Tested pull requests</td></tr>
+            <tr><th scope="row">Decides what stays with people</th><td>No</td><td>Blocks risky actions</td><td class="us">Yes, explicitly</td></tr>
+            <tr><th scope="row">Works with your stack</th><td>Replaces or adds tracing</td><td>Adds a runtime layer</td><td class="us">Reads the traces you already have</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">Industries</span>
+        <h2>Built for agents that do operational work.</h2>
+      </div>
+      <div class="grid-3">
+        <a class="card industry rise" href="#logistics"><span class="chip g">first industry</span><h3>Logistics and freight</h3><p>Dispatch, load booking and exception handling.</p><span class="go">See how it works for logistics</span></a>
+        <a class="card industry rise" href="#pilot"><span class="chip">pilots open</span><h3>Insurance</h3><p>Claims intake, coverage checks and broker workflows.</p><span class="go">Request a pilot</span></a>
+        <a class="card industry rise" href="#pilot"><span class="chip">pilots open</span><h3>Healthcare operations</h3><p>Payer calls, prior authorization and credentialing.</p><span class="go">Request a pilot</span></a>
+      </div>
+    </div>
+  </section>
+  <section class="section"><div class="wrap cta"><h2>Find out which hand-offs your agent could handle.</h2><a class="btn btn-primary" href="#pilot" data-cta="why-end">Request a pilot</a></div></section>
+</div>
+
+<!-- ============ RESULTS ============ -->
+<div class="view" data-view="results" hidden>
+  <section class="sub-hero">
+    <div class="wrap sub-hero-in">
+      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Results</span>
+      <h1>Proven on your past runs. Measured in hours.</h1>
+      <p class="lede">Every fix is replayed on real runs before you approve it. After it ships, you get four numbers per workflow.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap two-col">
+      <div class="stack">
+        <span class="label">Proof before you ship</span>
+        <h2>See the effect before you approve.</h2>
+        <p class="lede">Every fix is replayed against your agent's past runs and compared with what actually happened. You see which hand-offs it removes, and that nothing else changed, before anyone merges it.</p>
+      </div>
+      <div class="window rise">
+        <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>replay · fix #214 order-history lookup<a class="tag-link" href="#method-test">Method →</a></div>
+        <div class="window-body" id="replayPanel"></div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">What you measure</span>
+        <h2>Measured in hours, not dashboards.</h2>
+      </div>
+      <div class="grid-4">
+        <a class="metric rise linkcard" href="#method-handoffs-removed"><span class="unit">hand-offs / workflow</span><h3>Avoidable hand-offs removed</h3><p>Before and after, per workflow.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
+        <a class="metric rise linkcard" href="#method-hours-saved"><span class="unit">hours / month</span><h3>Human hours saved</h3><p>Hand-offs removed times the time each took.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
+        <a class="metric rise linkcard" href="#method-time-to-first-fix"><span class="unit">weeks</span><h3>Time to first fix</h3><p>Weeks, not quarters.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
+        <a class="metric rise linkcard" href="#method-wrong-automation"><span class="unit">target: 0</span><h3>Wrong-automation rate</h3><p>Cases that should have reached a person. Kept at zero.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
+      </div>
+    </div>
+  </section>
+  <section class="section"><div class="wrap cta"><h2>Find out which hand-offs your agent could handle.</h2><a class="btn btn-primary" href="#pilot" data-cta="results-end">Request a pilot</a></div></section>
+</div>
+
+<!-- ============ LOGISTICS ============ -->
+<div class="view" data-view="logistics" hidden>
+  <section class="sub-hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>For logistics</span>
+        <h1 class="h1s">For logistics teams whose agents still hand work to dispatchers.</h1>
+        <p class="lede">Freight agents book loads, chase carriers and handle exceptions. Many hand-offs come from a missing load-status lookup, a rate confirmation the agent can't read, or a carrier rule it applies too cautiously. Cairn finds those and fixes them, while exceptions that need a dispatcher's judgment stay with your team.</p>
+        <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="logistics-top">Request a pilot</a><button class="btn btn-secondary" type="button" data-demo>Watch the demo (100 s)</button></div>
+      </div>
+      <div class="window" id="logiMapWin">
+        <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>hand-off map · dispatch agent<a class="tag-link" href="#method-map">Method →</a></div>
+        <div class="window-body">
+          <div class="map" data-map="logistics" role="group" aria-label="Hand-off map of a dispatch agent. Six workflow steps with four hand-offs to a dispatcher. Three are marked Cairn would test: no load-status lookup, a rate confirmation it can't read, and a carrier rule read too cautiously. One is kept with a person: a damaged-freight exception."></div>
+          <div class="legend"><span><i class="b"></i>Agent step</span><span><i class="g"></i>Cairn would test</span><span><i class="r"></i>Kept with a dispatcher</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <span class="label">Where dispatch agents hand off</span>
+        <h2>Three are fixable. One is the dispatcher's call.</h2>
+        <p class="lede">Pick one to see it on the map.</p>
+      </div>
+      <div class="grid-4" id="logiCards">
+        <button type="button" class="card pick rise" data-sel="1"><span class="chip g">missing evidence</span><h3>No load-status lookup</h3><p>The status was in your TMS. The agent couldn't query it.</p></button>
+        <button type="button" class="card pick rise" data-sel="2"><span class="chip g">tool limit</span><h3>Rate cons it can't read</h3><p>Confirmations arrive as PDFs the agent can't parse.</p></button>
+        <button type="button" class="card pick rise" data-sel="3"><span class="chip g">unclear rule</span><h3>Carrier rules read too cautiously</h3><p>A loosely worded appointment rule sends every edge case to a person.</p></button>
+        <button type="button" class="card pick rise" data-sel="4"><span class="chip r">kept with a dispatcher</span><h3>Damaged freight</h3><p>Claims and liability calls stay with your team.</p></button>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="head" style="margin-bottom:0"><span class="label">Pilot</span><h2>One dispatch workflow. About six weeks.</h2></div>
+      <ol class="flow">
+        <li><p>Connect read-only to your dispatch agent's logs.</p></li>
+        <li><p>We map its hand-offs and ship two or three tested fixes.</p></li>
+        <li><p>You get a before-and-after report on hand-offs and dispatcher hours.</p></li>
+      </ol>
+      <div class="btn-row" style="align-items:center;gap:20px"><a class="btn btn-primary" href="#pilot" data-cta="logistics-end">Request a pilot</a><span class="small">Insurance and healthcare pages are coming. Pilots are open now.</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PILOT ============ -->
+<div class="view" data-view="pilot" hidden>
+  <section class="sub-hero">
+    <div class="wrap sub-hero-in">
+      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Pilot</span>
+      <h1>Run a pilot on one workflow.</h1>
+      <p class="lede">About six weeks. You get the hand-off map, two or three tested fixes as pull requests, and a before-and-after report on hand-offs and hours saved.</p>
+    </div>
+  </section>
+  <div class="wrap">
+    <div class="two-col pilot-grid">
+      <div class="stack" style="gap:48px">
+        <div class="stack" style="gap:16px">
+          <h3>Timeline</h3>
+          <div class="tl" id="timeline">
+            <div class="tl-track" aria-hidden="true"><i class="tl-fill"></i><span class="tl-dot"></span></div>
+            <div class="tl-weeks" aria-hidden="true"><span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span><span>W6</span></div>
+            <div class="tl-phases" role="tablist" aria-label="Pilot phases">
+              <button type="button" role="tab" aria-selected="true" data-ph="0" style="grid-column:span 1"><b>Week 1</b><span>Connect and map</span></button>
+              <button type="button" role="tab" aria-selected="false" data-ph="1" style="grid-column:span 3"><b>Weeks 2–4</b><span>Fixes and testing</span></button>
+              <button type="button" role="tab" aria-selected="false" data-ph="2" style="grid-column:span 2"><b>Weeks 5–6</b><span>Measure and report</span></button>
+            </div>
+            <div class="tl-detail" role="tabpanel" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card rise"><h3>What's included</h3><ul class="ticks"><li>The hand-off map for one workflow</li><li>Two or three tested fixes as pull requests</li><li>A before-and-after report on hand-offs and hours saved</li></ul></div>
+          <div class="card rise"><h3>What we need from you</h3><ul class="ticks"><li>Read-only access to your agent's logs</li><li>A repository to open pull requests against</li><li>One engineer for a weekly 30-minute review</li></ul></div>
+        </div>
+        <div class="card rise"><h3>Pricing</h3><p>A pilot fee, credited toward your subscription if you continue. Then a monthly subscription by the number of workflows covered. Contact us for pricing.</p></div>
+      </div>
+      <div id="formWrap" class="form-sticky">
+        <form class="form" id="pilotForm" novalidate>
+          <div class="stack" style="gap:6px"><h2 style="font-size:28px">Request a pilot</h2><p class="small">We reply within two working days.</p></div>
+          <div class="row-2">
+            <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required><span class="err" hidden>Enter your name.</span></div>
+            <div class="field"><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="err" hidden>Enter a work email, like you@company.com.</span></div>
+          </div>
+          <div class="field"><label for="f-company">Company</label><input id="f-company" name="company" autocomplete="organization" required><span class="err" hidden>Enter your company name.</span></div>
+          <div class="field"><label for="f-agent">What does your agent do? <span class="hint">One or two sentences</span></label><textarea id="f-agent" name="agent" required placeholder="Books loads and handles carrier exceptions for our dispatch team."></textarea><span class="err" hidden>Tell us what your agent does.</span></div>
+          <div class="row-2">
+            <div class="field"><label for="f-volume">Hand-offs per month <span class="hint">Roughly</span></label>
+              <select id="f-volume" name="volume" required>
+                <option value="">Choose a range</option><option>Under 500</option><option>500–2,000</option><option>2,000–10,000</option><option>Over 10,000</option><option>Not sure</option>
+              </select><span class="err" hidden>Choose a range, or "Not sure".</span></div>
+            <div class="field"><label for="f-stack">Agent framework or observability tool</label><input id="f-stack" name="stack" placeholder="e.g. LangGraph, Langfuse"></div>
+          </div>
+          <button class="btn btn-primary" type="submit" style="width:100%">Request a pilot</button>
+          <p class="small">We use these details only to reply about a pilot.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FAQ ============ -->
+<div class="view" data-view="faq" hidden>
+  <section class="sub-hero">
+    <div class="wrap sub-hero-in">
+      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Questions</span>
+      <h1>What CTOs ask first.</h1>
+      <p class="lede">Short answers on access, your stack, pricing and safety. Anything else, ask us on a pilot call.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap faq-grid">
+      <div class="stack" style="align-content:start"><span class="label">Before a pilot</span><h2 class="h2s">Six common questions.</h2></div>
+      <div class="faq">
+        <details><summary>What do you need access to?</summary><p>Read-only access to your agent's logs and its code repository. Cairn never changes production directly; every change is a pull request.</p></details>
+        <details><summary>Does it work with our stack?</summary><p>Cairn reads the traces you already collect, whatever agent framework or observability tool you use.</p></details>
+        <details><summary>What if a fix is wrong?</summary><p>It's tested on past runs before you see it, and your team approves every merge. Hand-offs that need judgment are never automated.</p></details>
+        <details><summary>Do we have to replace our observability tool?</summary><p>No. Cairn works on top of it.</p></details>
+        <details><summary>How is it priced?</summary><p>A pilot fee, then a monthly subscription by the number of workflows covered.</p></details>
+        <details><summary>Who's behind Cairn?</summary><p>A team from UC Berkeley. See <a href="#about">About</a>.</p></details>
+      </div>
+    </div>
+  </section>
+  <section class="section"><div class="wrap cta"><h2>Find out which hand-offs your agent could handle.</h2><a class="btn btn-primary" href="#pilot" data-cta="faq-end">Request a pilot</a></div></section>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<div class="view" data-view="about" hidden>
+  <section class="sub-hero">
+    <div class="wrap sub-hero-in">
+      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>About</span>
+      <h1>We're building the layer that decides what agents should do on their own.</h1>
+      <p class="lede">Cairn is built by a team of UC Berkeley students. <span class="todo">Add a two-sentence origin story here, in your own words.</span></p>
+    </div>
+  </section>
+  <div class="wrap">
+    <div class="detail wide">
+      <div class="stack"><span class="label">What we believe</span><h2 class="h2s">Three rules we build by.</h2></div>
+      <div class="grid-3 principles">
+        <div class="card rise"><span class="pnum">01</span><h3>Judgment stays with people.</h3><p>Some hand-offs should stay hand-offs. We draw that line explicitly and never automate past it.</p></div>
+        <div class="card rise"><span class="pnum">02</span><h3>Prove it before it ships.</h3><p>Every fix is replayed on real past runs before anyone is asked to merge it.</p></div>
+        <div class="card rise"><span class="pnum">03</span><h3>Measure in hours.</h3><p>We report hand-offs removed and hours saved, not dashboards.</p></div>
+      </div>
+    </div>
+    <div class="detail">
+      <div class="stack"><span class="label">Team</span><h2 class="h2s">The founders.</h2></div>
+      <div class="grid-3" id="team"></div>
+    </div>
+    <div class="detail">
+      <div class="stack"><span class="label">Contact</span><h2 class="h2s">Talk to us.</h2></div>
+      <div class="card contact-card">
+        <p>Investors, advisors and candidates: email the team directly. CTOs: the fastest route is a pilot request.</p>
+        <div class="contact-row"><span class="todo mono" id="contactEmail">team@your-domain</span><button type="button" class="mini" id="copyEmail">Copy</button></div>
+        <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="about">Request a pilot</a></div>
+      </div>
+    </div>
+  </div>
+  <div style="height:var(--section)"></div>
+</div>
+
+<div class="view" data-view="method" id="methodView" hidden></div>
+
+<section class="next-band" id="nextBand" aria-label="Next page">
+  <div class="wrap">
+    <span class="nb-label">Next</span>
+    <a class="nb-title" id="nbTitle" href="#how-it-works">How it works</a>
+    <div class="nb-track" aria-hidden="true"><i></i></div>
+    <span class="nb-hint"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v8M2.5 6.5L6 10l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="nbHint">Keep scrolling to continue</span></span>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="stack" style="gap:12px">
+        <a class="wordmark" href="#home" aria-label="cairn, home"><span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><g class="m1"><ellipse cx="10" cy="15.6" rx="8.6" ry="2.7"/></g><g class="m2"><ellipse cx="9" cy="10.5" rx="6.3" ry="2.25" transform="rotate(-6 9 10.5)"/></g><g class="m3"><ellipse cx="11.4" cy="5.8" rx="4.4" ry="1.85" transform="rotate(8 11.4 5.8)"/></g></svg></span><span class="wm">ca<span class="wm-i">ı</span>rn</span></a>
+        <span>Decision boundary infrastructure</span>
+      </div>
+      <nav aria-label="Footer">
+        <a href="#how-it-works">How it works</a><a href="#why-cairn">Why Cairn</a><a href="#results">Results</a><a href="#logistics">For logistics</a><a href="#pilot">Pilot</a><a href="#faq">Questions</a><a href="#about">About</a>
+      </nav>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Cairn</span></div>
+  </div>
+</footer>
+
+<div class="curtain" id="curtain" aria-hidden="true"><div class="curtain-in"><span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><g class="m1"><ellipse cx="10" cy="15.6" rx="8.6" ry="2.7"/></g><g class="m2"><ellipse cx="9" cy="10.5" rx="6.3" ry="2.25" transform="rotate(-6 9 10.5)"/></g><g class="m3"><ellipse cx="11.4" cy="5.8" rx="4.4" ry="1.85" transform="rotate(8 11.4 5.8)"/></g></svg></span><span class="c-label" id="cLabel">Cairn</span><span class="c-title" id="cTitle"></span><span class="c-line"><i></i></span></div></div>
+<dialog class="modal" id="demoModal" aria-labelledby="demoTitle">
+  <div class="modal-in">
+    <div class="modal-bar"><span id="demoTitle">Cairn product walkthrough · 100 s</span>
+      <button class="icon-btn" type="button" id="demoClose" aria-label="Close video"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6"/></svg></button>
+    </div>
+    <div class="video">
+      <div>
+        <div class="play"><svg width="22" height="22" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10l8-5z" fill="currentColor"/></svg></div>
+        <p>The demo video plugs in here: the 100-second walkthrough as a lazy-loaded video file with a captions track. Sound starts only when the viewer presses play.</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var counts = {pilot_requests:0, demo_plays:0};
+  function track(name){
+    counts[name] = (counts[name]||0)+1;
+    try{ if(window.plausible) window.plausible(name); }catch(e){}
+  }
+
+  /* ---------- Theme ---------- */
+  var root = document.documentElement, themeBtn = document.getElementById("themeBtn");
+  function isDark(){
+    return root.getAttribute("data-theme") !== "light";
+  }
+  function syncThemeBtn(){ themeBtn.setAttribute("aria-label", isDark() ? "Switch to light mode" : "Switch to dark mode"); }
+  try{ var saved = localStorage.getItem("cairn-theme"); if(saved) root.setAttribute("data-theme", saved); }catch(e){}
+  syncThemeBtn();
+  themeBtn.addEventListener("click", function(){
+    var next = isDark() ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try{ localStorage.setItem("cairn-theme", next); }catch(e){}
+    syncThemeBtn();
+  });
+
+  /* ---------- Nav ---------- */
+  var nav = document.getElementById("nav");
+  function onScroll(){ nav.classList.toggle("scrolled", window.scrollY > 8); }
+  window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
+  var menuBtn = document.getElementById("menuBtn"), menu = document.getElementById("mobileMenu");
+  menuBtn.addEventListener("click", function(){
+    var open = menu.hidden; menu.hidden = !open;
+    menuBtn.setAttribute("aria-expanded", String(open));
+    menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  });
+
+  /* ---------- Timing helpers ---------- */
+  function later(el, fn, ms){ el._t = el._t || []; el._t.push(setTimeout(fn, reduce ? 0 : ms)); }
+  function stop(el){ (el._t || []).forEach(clearTimeout); el._t = []; }
+  function fmt(n){ return n.toLocaleString("en-US"); }
+  function countTo(node, to, dur){
+    if(reduce || !dur){ node.textContent = fmt(to); return; }
+    var t0 = performance.now();
+    (function f(t){ var p = Math.min(1, (t - t0)/dur); p = 1 - Math.pow(1 - p, 3); node.textContent = fmt(Math.round(to*p)); if(p < 1) requestAnimationFrame(f); })(t0);
+  }
+  var CHECK = '<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2 2 4-4.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function onView(el, fn){
+    if(!("IntersectionObserver" in window)){ fn(); return; }
+    var o = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ o.disconnect(); fn(); } }); }, {threshold:.25});
+    o.observe(el);
+  }
+
+  /* ---------- Hand-off map (inline SVG, interactive) ---------- */
+  var MAPS = {
+    home: [
+      {t:"Read the change request"},
+      {t:"Look up the order", h:{r:"Never read the order history", k:"test", type:"Missing evidence", why:"The answer was in the order history, which the agent never queried.", fix:"Cairn adds an order-history lookup before escalating, then tests it on past runs."}},
+      {t:"Check the change policy", h:{r:"Refund above policy limit", k:"keep", type:"Policy boundary", why:"Refunds above the limit need a manager's approval.", fix:"Kept with a person. Cairn records it as a boundary and checks that it stays one."}},
+      {t:"Update the order", h:{r:"No tool to edit the address", k:"test", type:"Tool limit", why:"The agent knew the new address but had no tool to change it.", fix:"Cairn adds an address-edit tool with the same permissions your team uses."}},
+      {t:"Reply to the customer", h:{r:"Upset customer, sensitive case", k:"keep", type:"Human judgment", why:"An upset customer needs a person's judgment and tone.", fix:"Kept with a person. Cairn never automates past this line."}}
+    ],
+    logistics: [
+      {t:"Receive the load tender"},
+      {t:"Check load status", h:{r:"No load-status lookup", k:"test", type:"Missing evidence", why:"The load status was in your TMS, but the agent had no way to query it.", fix:"Cairn adds a load-status lookup and replays past tenders to prove it."}},
+      {t:"Read the rate confirmation", h:{r:"Can't read the rate con PDF", k:"test", type:"Tool limit", why:"Rate confirmations arrive as PDFs the agent can't parse.", fix:"Cairn adds a rate-confirmation parser and checks it against past loads."}},
+      {t:"Apply carrier rules", h:{r:"Reads a carrier rule too cautiously", k:"test", type:"Unclear rule", why:"An appointment-window rule is worded loosely, so the agent escalates every edge case.", fix:"Cairn rewrites the rule with explicit thresholds, then replays past loads."}},
+      {t:"Handle exceptions", h:{r:"Damaged freight needs a call", k:"keep", who:"Kept with a dispatcher", type:"Human judgment", why:"Damaged freight means a claim, a customer call and a judgment on liability.", fix:"Kept with a dispatcher. Cairn marks the boundary and keeps it."}},
+      {t:"Book and confirm"}
+    ]
+  };
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, text){
+    var e = document.createElementNS(NS, tag);
+    for(var k in attrs) e.setAttribute(k, attrs[k]);
+    if(text != null) e.textContent = text;
+    return e;
+  }
+  function drawMap(host, steps, narrow){
+    host.innerHTML = "";
+    var W = narrow ? 340 : 560, nodeW = narrow ? 230 : 214, nodeH = 40, tagW = narrow ? 290 : 274, tagH = 48;
+    var y = 26, rowGap = narrow ? 18 : 30, items = [], spineX = 18;
+    steps.forEach(function(s){
+      var it = {s:s, y:y};
+      if(narrow){ y += nodeH + (s.h ? tagH + 14 : 0) + rowGap; }
+      else { y += Math.max(nodeH, s.h ? tagH : 0) + rowGap; }
+      items.push(it);
+    });
+    var H = y - rowGap + 8;
+    var svg = el("svg", {viewBox:"0 0 "+W+" "+H, focusable:"false"});
+    svg.appendChild(el("text", {x:0, y:12, "class":"axis", "aria-hidden":"true"}, "AGENT WORKFLOW"));
+    if(!narrow) svg.appendChild(el("text", {x:W - tagW, y:12, "class":"axis", "aria-hidden":"true"}, "HAND-OFFS TO A PERSON"));
+    var firstY = items[0].y + nodeH/2, lastY = items[items.length-1].y + nodeH/2;
+    svg.appendChild(el("line", {x1:spineX, y1:firstY, x2:spineX, y2:lastY, "class":"spine"}));
+    var hos = [];
+    items.forEach(function(it, i){
+      var s = it.s, ny = narrow ? it.y : it.y + (s.h ? (tagH - nodeH)/2 : 0);
+      var g = el("g", {"class":"node", "aria-hidden":"true"});
+      g.appendChild(el("rect", {x:0, y:ny, width:nodeW, height:nodeH, rx:9}));
+      g.appendChild(el("text", {x:14, y:ny + 25, "class":"num"}, String(i+1).padStart(2,"0")));
+      g.appendChild(el("text", {x:40, y:ny + 25}, s.t));
+      svg.appendChild(g);
+      if(s.h){
+        var fin = s.h.k === "test" ? "Cairn would test" : (s.h.who || "Kept with a person");
+        var ho = el("g", {"class":"ho", "data-kind":s.h.k, "data-i":i, tabindex:"0", role:"button", "aria-label":"Step "+(i+1)+": "+s.h.r+". "+fin+". Show details."}), tx, ty, path;
+        if(narrow){ tx = W - tagW; ty = ny + nodeH + 14; path = "M"+(tx - 14)+" "+(ny + nodeH)+" V"+(ty + tagH/2)+" H"+tx; }
+        else { tx = W - tagW; ty = it.y; path = "M"+nodeW+" "+(ny + nodeH/2)+" H"+tx; }
+        ho.appendChild(el("path", {d:path, "class":"link"}));
+        ho.appendChild(el("rect", {x:tx, y:ty, width:tagW, height:tagH, rx:9}));
+        ho.appendChild(el("circle", {cx:tx + 14, cy:ty + 17, r:3.5, "class":"dot"}));
+        ho.appendChild(el("text", {x:tx + 26, y:ty + 21, "class":"reason"}, s.h.r));
+        ho.appendChild(el("text", {x:tx + 26, y:ty + 38, "class":"status"}, "Hand-off"));
+        ho._final = fin;
+        svg.appendChild(ho); hos.push(ho);
+      }
+    });
+    host.appendChild(svg);
+    return hos;
+  }
+  function settle(ho){ ho.classList.add("in", ho.getAttribute("data-kind")); ho.querySelector(".status").textContent = ho._final; }
+  function mapDetail(host){
+    var d = host._detail, i = host._sel, steps = MAPS[host.getAttribute("data-map")];
+    host.classList.toggle("has-sel", i != null);
+    if(host._onSel) host._onSel(i);
+    Array.prototype.forEach.call(host.querySelectorAll(".ho"), function(h){ h.classList.toggle("sel", +h.getAttribute("data-i") === i); h.setAttribute("aria-pressed", String(+h.getAttribute("data-i") === i)); });
+    if(i == null){ d.innerHTML = '<b>Select a hand-off</b><span>Click any tag on the map to see why the agent handed off and what Cairn does about it.</span>'; return; }
+    var h = steps[i].h, keep = h.k === "keep";
+    d.innerHTML = '<div class="row"><span class="chip '+(keep ? "r" : "g")+'">'+h.type.toLowerCase()+'</span><b>Step '+String(i+1).padStart(2,"0")+' · '+steps[i].t+'</b></div>'+
+      '<span><b>Why:</b> '+h.why+'</span><span><b>'+(keep ? "Boundary:" : "Cairn:")+'</b> '+h.fix+'</span>'+methodLink(typeSlug(h.type), "How Cairn handles "+h.type.toLowerCase());
+  }
+  function renderMap(host, animate){
+    var narrow = host.clientWidth < 470;
+    stop(host);
+    var hos = drawMap(host, MAPS[host.getAttribute("data-map")], narrow);
+    host._narrow = narrow;
+    if(!host._detail){
+      var legend = host.parentNode.querySelector(".legend");
+      legend.insertAdjacentHTML("beforeend", '<button type="button" class="mini" data-map-replay>'+
+        '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 6a3.8 3.8 0 1 0 1.1-2.7M2 1.8v2.1h2.1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Replay</button>');
+      legend.querySelector("[data-map-replay]").addEventListener("click", function(){ host._sel = null; mapDetail(host); renderMap(host, true); });
+      var d = document.createElement("div"); d.className = "map-detail"; d.setAttribute("aria-live","polite");
+      legend.insertAdjacentElement("afterend", d); host._detail = d;
+      host.addEventListener("click", function(e){ var g = e.target.closest(".ho"); if(!g) return; var i = +g.getAttribute("data-i"); host._sel = host._sel === i ? null : i; mapDetail(host); });
+      host.addEventListener("keydown", function(e){ if((e.key === "Enter" || e.key === " ") && e.target.closest(".ho")){ e.preventDefault(); e.target.closest(".ho").dispatchEvent(new MouseEvent("click", {bubbles:true})); } });
+    }
+    if(!animate || reduce){ hos.forEach(settle); host.classList.remove("anim"); mapDetail(host); return; }
+    host.classList.add("anim");
+    hos.forEach(function(ho, i){
+      later(host, function(){ ho.classList.add("in"); }, 300 + i*420);
+      later(host, function(){ settle(ho); }, 300 + hos.length*420 + 250 + i*180);
+    });
+    later(host, function(){ host.classList.remove("anim"); if(host._sel == null && hos.length){ host._sel = +hos[0].getAttribute("data-i"); } mapDetail(host); }, 300 + hos.length*600 + 900);
+    mapDetail(host);
+  }
+  var maps = Array.prototype.slice.call(document.querySelectorAll("[data-map]"));
+  var played = new WeakSet();
+  maps.forEach(function(h){ if(h.offsetParent !== null) renderMap(h, false); });
+  function maybePlay(host){
+    if(host.offsetParent === null) return;
+    var r = host.getBoundingClientRect();
+    if(!played.has(host) && r.top < window.innerHeight && r.bottom > 0){ played.add(host); renderMap(host, true); }
+  }
+  var resizeT;
+  window.addEventListener("resize", function(){
+    clearTimeout(resizeT);
+    resizeT = setTimeout(function(){ maps.forEach(function(h){ if(h.offsetParent !== null && h._detail && (h.clientWidth < 470) !== h._narrow) renderMap(h, false); }); }, 150);
+  });
+
+  /* ---------- Product panes (shared by home + How it works) ---------- */
+  var STEPS = [
+    {id:"map", label:"01 Map", title:"Every hand-off.", line:"Cairn reads your agent's runs and finds each time a task went to a person.", win:"cairn · map"},
+    {id:"diagnose", label:"02 Diagnose", title:"The reason behind each one.", line:"Missing evidence, a missing tool, a policy boundary or a real judgment call.", win:"cairn · diagnose"},
+    {id:"change", label:"03 Change", title:"A fix for what's fixable.", line:"A new lookup, a new tool or a clearer rule.", win:"cairn · change"},
+    {id:"test", label:"04 Test", title:"Proven on your past runs.", line:"Each change is replayed in a sandbox against the original behavior.", win:"cairn · test"},
+    {id:"ship", label:"05 Ship", title:"A pull request your team approves.", line:"Reviewed and versioned like any other code.", win:"cairn · ship"},
+    {id:"monitor", label:"06 Monitor", title:"Fixes stay fixed.", line:"Each one stays on as a check, so later versions can't quietly break it.", win:"cairn · monitor"}
+  ];
+  var REPLAY_ICON = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 6a3.8 3.8 0 1 0 1.1-2.7M2 1.8v2.1h2.1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var NOTE = '';
+  var MAP_ROWS = [
+    ["Look up the order","Order history not read",148,"Missing evidence. Fixable: Cairn would test an order-history lookup."],
+    ["Update the order","No address-edit tool",96,"Tool limit. Fixable: Cairn would add an address-edit tool."],
+    ["Check the change policy","Refund above limit",71,"Policy boundary. Kept with a person."],
+    ["Reply to the customer","Sensitive case",39,"Human judgment. Kept with a person."]
+  ];
+  var DIAG_ROWS = [["missing evidence","g",148,"fix"],["tool limit","g",96,"fix"],["policy boundary","r",71,"keep"],["human judgment","r",39,"keep"]];
+  var CODE = [["c","@@ def handle_change_request(req):"],["ctx","    order = orders.get(req.order_id)"],["add","    history = orders.history(req.order_id, limit=20)"],["add","    if history.has_prior_change(req.kind):"],["add","        return apply_known_change(order, history)"],["del",'    return escalate(req, reason="unknown order state")'],["add",'    return escalate(req, reason="no prior change on record")']];
+  var MON_ROWS = ["#214 Order-history lookup","#209 Address-edit tool","#198 Refund limit stays with a person"];
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+  var BUILD = {
+    map: function(){
+      return '<div class="ui-title"><b>Hand-offs · order-changes agent</b><span>last 30 days</span></div>'+
+        '<div class="scroll-x"><table class="ui-table hov"><thead><tr><th>Step</th><th>Reason found</th><th class="n">Hand-offs</th></tr></thead><tbody>'+
+        MAP_ROWS.map(function(r, i){ return '<tr class="rv" data-row="'+i+'" tabindex="0"><td>'+r[0]+'</td><td>'+r[1]+'</td><td class="n"><span data-count="'+r[2]+'">0</span></td></tr>'; }).join("")+
+        '</tbody></table></div><div class="pane-foot"><span class="pane-msg">Click a row to see its diagnosis.</span></div>';
+    },
+    diagnose: function(){
+      return '<div class="ui-title"><b>Why the agent handed off</b><span class="seg" role="group" aria-label="Filter"><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="fix" aria-pressed="false">Fixable</button><button type="button" data-f="keep" aria-pressed="false">Boundary</button></span></div>'+
+        '<div class="scroll-x"><table class="ui-table"><tbody>'+
+        DIAG_ROWS.map(function(r){ return '<tr data-g="'+r[3]+'"><td><span class="chip '+r[1]+'">'+r[0]+'</span></td><td style="width:42%"><div class="bar"><i data-w="'+Math.round(r[2]/354*100)+'" style="background:var('+(r[1]==="g" ? "--green" : "--clay")+')"></i></div></td><td class="n"><span data-count="'+r[2]+'">0</span><span class="pct">'+Math.round(r[2]/354*100)+'%</span></td></tr>'; }).join("")+
+        '</tbody></table></div><div class="pane-foot"><span class="pane-msg">354 hand-offs · 244 fixable, 110 kept with a person</span></div>';
+    },
+    change: function(){
+      return '<div class="ui-title"><b>Proposed change · add order-history lookup</b><span class="seg" role="group" aria-label="View"><button type="button" data-mode="diff" aria-pressed="true">Diff</button><button type="button" data-mode="result" aria-pressed="false">Result</button></span></div>'+
+        '<div class="code">'+CODE.map(function(l){ return '<span class="ln '+l[0]+'">'+esc(l[1])+'</span>'; }).join("")+'</div>'+
+        '<div class="pane-foot"><span class="pane-msg mono">agent/tools/orders.py · +4 −1</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Rewrite</button></span></div>';
+    },
+    test: function(){
+      return '<div class="ui-title"><b>Sandbox replay · fix #214</b><span class="st" data-status><span class="ic">'+CHECK+'</span><span>ready</span></span></div>'+
+        '<div class="prog"><i></i></div>'+
+        '<div class="kv"><div><b data-count="200">0</b><span>past runs replayed</span></div><div><b data-count="37">0</b><span>hand-offs removed</span></div><div><b data-count="0">0</b><span>other behavior changed</span></div></div>'+
+        '<div class="pane-foot"><span class="pane-msg">Each run is replayed with and without the fix.</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run replay</button></span></div>';
+    },
+    ship: function(){
+      return '<div class="pr"><div class="pr-head"><span class="badge" data-badge>Open</span><b>#214 Add order-history lookup before escalating</b></div>'+
+        '<div class="pr-body"><h5>## Why</h5>148 hand-offs in 30 days came from requests the\nagent could answer from the order history.\n<h5>## Tested</h5>Replayed 200 past runs: 37 hand-offs removed,\n0 other behavior changed.\n<h5>## Kept with a person</h5>Refunds above the policy limit still escalate.</div>'+
+        '<div class="checks"><div class="chk"><span class="ic">'+CHECK+'</span>Sandbox replay: 37 hand-offs removed</div><div class="chk"><span class="ic">'+CHECK+'</span>Kept checks: 3 of 3 passing</div><div class="chk"><span class="ic">'+CHECK+'</span>Decision boundary unchanged</div></div></div>'+
+        '<div class="pane-foot"><span class="pane-msg">Running checks…</span><span class="btns"><button type="button" class="mini primary" data-act="approve" disabled>Approve and merge</button></span></div>';
+    },
+    monitor: function(){
+      return '<div class="ui-title"><b>Kept checks</b><span>run on every agent release</span></div>'+
+        '<div class="scroll-x"><table class="ui-table"><tbody>'+
+        MON_ROWS.map(function(n){ return '<tr><td>'+n+'</td><td class="n"><span class="st"><span class="ic">'+CHECK+'</span><span>queued</span></span></td></tr>'; }).join("")+
+        '</tbody></table></div><div class="pane-foot"><span class="pane-msg">Release v2.4</span><span class="btns"><button type="button" class="mini warn" data-act="regress">Try a risky change</button><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run checks</button></span></div>';
+    },
+    types: function(){
+      var T = [["missing evidence","g","The agent escalated a delivery change without reading the order history that answered it.","Cairn adds the lookup and tests it on past runs."],
+               ["tool limit","g","The agent knew the new address but had no tool to update it.","Cairn adds the tool, scoped to your team's permissions."],
+               ["policy boundary","r","A refund above the policy limit needs a manager's approval.","Kept with a person. Cairn keeps a check on it."],
+               ["human judgment","r","An upset customer with a damaged shipment needs a person.","Kept with a person. Never automated."]];
+      return '<div class="types">'+T.map(function(t){ return '<div class="rv" tabindex="0" role="button" aria-pressed="false"><span class="chip '+t[1]+'">'+t[0]+'</span><p class="front">'+t[2]+'</p><p class="back">'+t[3]+'<br>'+methodLink(t[0].replace(/ /g,"-"))+'</p><span class="tip">Click to see what Cairn does</span></div>'; }).join("")+'</div>';
+    }
+  };
+  function setStatus(pv, cls, text){ var s = pv.querySelector("[data-status]"); if(!s) return; s.className = "st " + cls; s.lastChild.textContent = text; }
+  var PLAY = {
+    map: function(pv){
+      var rows = pv.querySelectorAll("tbody tr");
+      Array.prototype.forEach.call(rows, function(r){ r.classList.remove("in","sel"); r.querySelector("[data-count]").textContent = "0"; });
+      pv.querySelector(".pane-msg").textContent = "Reading 30 days of runs…";
+      Array.prototype.forEach.call(rows, function(r, i){ later(pv, function(){ r.classList.add("in"); countTo(r.querySelector("[data-count]"), +r.querySelector("[data-count]").dataset.count, 700); }, 150 + i*260); });
+      later(pv, function(){ pv.querySelector(".pane-msg").textContent = "354 hand-offs found. Click a row to see its diagnosis."; }, 150 + rows.length*260 + 500);
+    },
+    diagnose: function(pv){
+      Array.prototype.forEach.call(pv.querySelectorAll(".bar i"), function(b){ b.style.width = "0"; });
+      Array.prototype.forEach.call(pv.querySelectorAll("[data-count]"), function(c){ c.textContent = "0"; });
+      later(pv, function(){
+        Array.prototype.forEach.call(pv.querySelectorAll(".bar i"), function(b){ b.style.width = b.dataset.w + "%"; });
+        Array.prototype.forEach.call(pv.querySelectorAll("[data-count]"), function(c){ countTo(c, +c.dataset.count, 1000); });
+      }, 120);
+    },
+    change: function(pv){
+      var ls = pv.querySelectorAll(".ln");
+      Array.prototype.forEach.call(ls, function(l){ l.classList.remove("in"); });
+      Array.prototype.forEach.call(ls, function(l, i){ later(pv, function(){ l.classList.add("in"); }, 120 + i*170); });
+    },
+    test: function(pv){
+      var bar = pv.querySelector(".prog i"), cs = pv.querySelectorAll("[data-count]"), btn = pv.querySelector("[data-act=replay]");
+      bar.style.transition = "none"; bar.style.width = "0"; cs.forEach(function(c){ c.textContent = "0"; });
+      setStatus(pv, "spin", "replaying"); btn.disabled = true;
+      later(pv, function(){ bar.style.transition = "width 1.8s cubic-bezier(.4,0,.2,1)"; bar.style.width = "100%"; cs.forEach(function(c){ countTo(c, +c.dataset.count, 1800); }); }, 60);
+      later(pv, function(){ setStatus(pv, "ok", "regression check passed"); btn.disabled = false; btn.lastChild.textContent = "Run again"; }, 1950);
+    },
+    ship: function(pv){
+      var ks = pv.querySelectorAll(".chk"), btn = pv.querySelector("[data-act=approve]"), badge = pv.querySelector("[data-badge]"), msg = pv.querySelector(".pane-msg");
+      ks.forEach(function(k){ k.className = "chk spin"; });
+      badge.textContent = "Open"; badge.classList.remove("merged"); btn.disabled = true; btn.textContent = "Approve and merge"; msg.textContent = "Running checks…"; msg.className = "pane-msg";
+      ks.forEach(function(k, i){ later(pv, function(){ k.className = "chk ok"; }, 500 + i*550); });
+      later(pv, function(){ btn.disabled = false; msg.textContent = "All checks passed. Waiting for your review."; }, 500 + ks.length*550);
+    },
+    monitor: function(pv, regress){
+      var sts = pv.querySelectorAll(".st"), msg = pv.querySelector(".pane-msg");
+      msg.className = "pane-msg"; msg.textContent = regress ? "Release v2.5 · auto-approves refunds up to $5,000" : "Release v2.4";
+      sts.forEach(function(s){ s.className = "st spin"; s.lastChild.textContent = "running"; });
+      sts.forEach(function(s, i){ later(pv, function(){
+        var fail = regress && i === 2;
+        s.className = "st " + (fail ? "bad" : "ok"); s.lastChild.textContent = fail ? "failing" : "passing";
+      }, 450 + i*500); });
+      later(pv, function(){
+        if(regress){ msg.className = "pane-msg bad"; msg.textContent = "Release blocked: v2.5 would automate refunds that need a person."; }
+        else { msg.className = "pane-msg ok"; msg.textContent = "All 3 checks passing. Release v2.4 is clear."; }
+      }, 450 + sts.length*500 + 100);
+    },
+    types: function(pv){
+      var cs = pv.querySelectorAll(".types > div");
+      cs.forEach(function(c){ c.classList.remove("in","flip"); c.setAttribute("aria-pressed","false"); });
+      cs.forEach(function(c, i){ later(pv, function(){ c.classList.add("in"); }, 100 + i*160); });
+    }
+  };
+  function makePane(kind){ var d = document.createElement("div"); d.className = "pv"; d.dataset.kind = kind; d.innerHTML = BUILD[kind](); return d; }
+  function play(pv, arg){ stop(pv); PLAY[pv.dataset.kind](pv, arg); }
+
+  document.addEventListener("click", function(e){
+    var pv = e.target.closest(".pv"); if(!pv) return;
+    var act = e.target.closest("[data-act]"), row = e.target.closest("[data-row]"), f = e.target.closest("[data-f]"), mode = e.target.closest("[data-mode]"), card = e.target.closest(".types > div");
+    if(act){
+      var a = act.dataset.act;
+      if(a === "replay") play(pv);
+      else if(a === "regress") play(pv, true);
+      else if(a === "approve"){ var b = pv.querySelector("[data-badge]"); b.textContent = "Merged"; b.classList.add("merged"); act.disabled = true; act.textContent = "Merged"; var m = pv.querySelector(".pane-msg"); m.className = "pane-msg ok"; m.textContent = "Merged. Fix #214 now runs as a kept check."; }
+    } else if(row){
+      var was = row.classList.contains("sel");
+      pv.querySelectorAll("[data-row]").forEach(function(r){ r.classList.remove("sel"); });
+      var msg = pv.querySelector(".pane-msg");
+      if(!was){ row.classList.add("sel"); msg.textContent = MAP_ROWS[+row.dataset.row][3]; } else msg.textContent = "Click a row to see its diagnosis.";
+    } else if(f){
+      pv.querySelectorAll("[data-f]").forEach(function(x){ x.setAttribute("aria-pressed", String(x === f)); });
+      pv.querySelectorAll("tr[data-g]").forEach(function(r){ r.classList.toggle("dim", f.dataset.f !== "all" && r.dataset.g !== f.dataset.f); });
+    } else if(mode){
+      pv.querySelectorAll("[data-mode]").forEach(function(x){ x.setAttribute("aria-pressed", String(x === mode)); });
+      pv.querySelector(".code").classList.toggle("result", mode.dataset.mode === "result");
+    } else if(card){
+      var on = !card.classList.contains("flip"); card.classList.toggle("flip", on); card.setAttribute("aria-pressed", String(on));
+      card.querySelector(".tip").textContent = on ? "Click to see the example" : "Click to see what Cairn does";
+    }
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "Enter" && e.key !== " ") return;
+    var t = e.target; if(t.matches && (t.matches(".pv [data-row]") || t.matches(".pv .types > div"))){ e.preventDefault(); t.click(); }
+  });
+
+  if(document.getElementById("homeSteps")) (function(){
+  var stepsEl = document.getElementById("homeSteps"), panesEl = document.getElementById("homePanes"), paneTitle = document.getElementById("paneTitle");
+  STEPS.forEach(function(s, i){
+    var li = document.createElement("li"); li.className = "step" + (i===0 ? " active" : ""); li.dataset.i = i;
+    li.innerHTML = '<button type="button" aria-controls="pane-'+s.id+'"><span class="label">'+s.label+'</span><h3>'+s.title+'</h3><p>'+s.line+'</p></button><a class="step-more" href="#method-'+s.id+'">Read the method →</a>';
+    stepsEl.appendChild(li);
+    var p = document.createElement("div"); p.className = "pane" + (i===0 ? " on" : ""); p.id = "pane-"+s.id;
+    p.appendChild(makePane(s.id)); p.insertAdjacentHTML("beforeend", NOTE);
+    panesEl.appendChild(p);
+  });
+  var curStep = 0;
+  function setStep(i){
+    if(i === curStep && panesEl._started) return;
+    curStep = i; panesEl._started = true;
+    Array.prototype.forEach.call(stepsEl.children, function(li, j){ li.classList.toggle("active", j===i); });
+    Array.prototype.forEach.call(panesEl.children, function(p, j){ p.classList.toggle("on", j===i); if(j !== i) stop(p.firstChild); });
+    paneTitle.textContent = STEPS[i].win; document.getElementById("paneMethod").href = "#method-" + STEPS[i].id;
+    play(panesEl.children[i].firstChild);
+  }
+  onView(panesEl, function(){ if(!panesEl._started) setStep(curStep); });
+  stepsEl.addEventListener("click", function(e){ var li = e.target.closest(".step"); if(li){ setStep(+li.dataset.i); manual = Date.now(); } });
+  var manual = 0;
+  if("IntersectionObserver" in window){
+    var so = new IntersectionObserver(function(entries){
+      if(Date.now() - manual < 1200 || window.innerWidth <= 900) return;
+      entries.forEach(function(en){ if(en.isIntersecting) setStep(+en.target.dataset.i); });
+    }, {rootMargin:"-45% 0px -45% 0px"});
+    Array.prototype.forEach.call(stepsEl.children, function(li){ so.observe(li); });
+  }
+
+  })();
+
+  /* Replay panel */
+  var REPLAY_RUNS = [["1042","ok-flag","resolved"],["1043","same-flag","unchanged"],["1047","ok-flag","resolved"],["1051","ho-flag","hand-off"],["1058","same-flag","unchanged"]];
+  var BEFORE = {"1042":1,"1047":1,"1051":1};
+  function runRow(id, cls, text, done){ return '<div class="run'+(done ? " done" : "")+'" data-r="'+id+'"><span>run '+id+'</span><div class="track"><i></i><i></i><i></i><i></i>'+(cls ? '<b class="'+cls+'">'+text+'</b>' : '')+'</div></div>'; }
+  var replayPanel = document.getElementById("replayPanel");
+  replayPanel.innerHTML = '<div class="pv" data-kind="replayp"><div class="replay"><div><h4>Before · original runs</h4><div class="runs">'+
+    REPLAY_RUNS.map(function(r){ return runRow(r[0], BEFORE[r[0]] ? "ho-flag" : "", "hand-off", true); }).join("")+
+    '</div></div><div><h4>With fix · replayed</h4><div class="runs" data-after>'+
+    REPLAY_RUNS.map(function(r){ return runRow(r[0], r[1], r[2], false); }).join("")+
+    '</div></div></div><div class="replay-foot"><span data-sum>Replaying 5 past runs…</span><span class="btns" style="display:flex;gap:12px;align-items:center"><span class="st" data-status><span class="ic">'+CHECK+'</span><span>waiting</span></span><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Replay again</button></span></div></div>'+NOTE;
+  PLAY.replayp = function(pv){
+    var after = pv.querySelectorAll("[data-after] .run"), sum = pv.querySelector("[data-sum]"), removed = 0;
+    after.forEach(function(r){ r.classList.remove("done"); });
+    setStatus(pv, "spin", "replaying"); sum.textContent = "Replaying 5 past runs…";
+    after.forEach(function(r, i){ later(pv, function(){
+      r.classList.add("done"); if(REPLAY_RUNS[i][1] === "ok-flag") removed++;
+      sum.innerHTML = '<b>'+removed+' of 3</b> hand-offs removed so far';
+    }, 300 + i*520); });
+    later(pv, function(){ sum.innerHTML = '<b>2 of 3</b> hand-offs removed · run 1051 still needs a person'; setStatus(pv, "ok", "regression check passed"); }, 300 + after.length*520 + 200);
+  };
+  var replayPv = replayPanel.firstChild;
+  replayPv.addEventListener("pointerover", function(e){ var r = e.target.closest(".run"); var rp = replayPv.querySelector(".replay");
+    replayPv.querySelectorAll(".run").forEach(function(x){ x.classList.toggle("hl", !!r && x.dataset.r === r.dataset.r); });
+    if(r) rp.setAttribute("data-hl", r.dataset.r); else rp.removeAttribute("data-hl"); });
+  replayPv.addEventListener("pointerleave", function(){ replayPv.querySelector(".replay").removeAttribute("data-hl"); replayPv.querySelectorAll(".run").forEach(function(x){ x.classList.remove("hl"); }); });
+  onView(replayPanel, function(){ play(replayPv); });
+
+  /* How it works page */
+  var DETAIL = {
+    map: {h:"What Cairn reads", p:["Cairn connects read-only to your agent's runs and escalation events: the traces you already collect, plus the record of every time a task went to a person.","It produces a hand-off map: each workflow step, how often it hands off, and where."]},
+    diagnose: {h:"Four kinds of hand-off", p:["Each hand-off gets one of four reasons. The first two are usually fixable. The last two mark your decision boundary."], types:true},
+    change: {h:"Fixes written as code", p:["For a fixable hand-off, Cairn writes the change in your agent's own repository: a new lookup, a new tool, or a clearer rule in its instructions.","Each fix is small and scoped to one cause, so it is easy to review."]},
+    test: {h:"Sandbox replay", p:["Cairn replays your agent's past runs in a sandbox, once with the original behavior and once with the fix.","The comparison shows which hand-offs the fix removes, and confirms that every other run behaves the same."]},
+    ship: {h:"An example pull request", p:["The fix arrives as a pull request with the evidence attached: why it was needed, what the replay showed, and what still goes to a person.","Your team reviews and merges it like any other code."]},
+    monitor: {h:"Kept checks", p:["Each merged fix stays on as a check that runs on every new version of your agent.","If a later change brings a hand-off back, or automates one that should stay with a person, the check fails before it ships. Try the risky change to see it."]}
+  };
+  var howEl = document.getElementById("howDetails");
+  STEPS.forEach(function(s){
+    var d = DETAIL[s.id];
+    var sec = document.createElement("section"); sec.className = "detail"; sec.id = "how-"+s.id;
+    sec.innerHTML = '<div class="stack"><span class="label">'+s.label+'</span><h2 style="font-size:clamp(28px,3.4vw,40px)">'+s.title+'</h2>'+
+      '<h3 style="margin-top:8px">'+d.h+'</h3>'+d.p.map(function(t){ return '<p>'+t+'</p>'; }).join("")+methodLink(s.id)+'</div>'+
+      '<div class="window rise"><div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>'+s.win+'<a class="tag-link" href="#method-'+s.id+'">Method →</a></div><div class="window-body"></div></div>';
+    var body = sec.querySelector(".window-body"), pv = makePane(d.types ? "types" : s.id);
+    body.appendChild(pv); body.insertAdjacentHTML("beforeend", NOTE);
+    howEl.appendChild(sec);
+    onView(body, function(){ play(pv); });
+  });
+
+  /* Step bar on How it works */
+  var stepbar = document.getElementById("stepbar");
+  STEPS.forEach(function(s, i){
+    var b = document.createElement("button"); b.type = "button"; b.dataset.target = "how-" + s.id;
+    b.innerHTML = '<span>' + s.label.slice(0,2) + '</span>' + s.label.slice(3);
+    if(i === 0) b.setAttribute("aria-current", "step");
+    stepbar.appendChild(b);
+  });
+  function markStep(id){
+    Array.prototype.forEach.call(stepbar.children, function(b){
+      var on = b.dataset.target === id;
+      if(on){ b.setAttribute("aria-current","step"); var l = b.offsetLeft - stepbar.clientWidth/2 + b.clientWidth/2; stepbar.scrollTo({left:l, behavior:reduce ? "auto" : "smooth"}); }
+      else b.removeAttribute("aria-current");
+    });
+  }
+  stepbar.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    markStep(b.dataset.target);
+    document.getElementById(b.dataset.target).scrollIntoView({behavior:reduce ? "auto" : "smooth", block:"start"});
+  });
+  if("IntersectionObserver" in window){
+    var sbo = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) markStep(e.target.id); }); }, {rootMargin:"-35% 0px -60% 0px"});
+    Array.prototype.forEach.call(howEl.querySelectorAll(".detail"), function(d){ sbo.observe(d); });
+  }
+
+  /* Logistics: cards linked to the map */
+  var logiHost = document.querySelector('[data-map="logistics"]'), logiCards = document.getElementById("logiCards");
+  logiHost._onSel = function(i){
+    Array.prototype.forEach.call(logiCards.querySelectorAll(".pick"), function(c){ c.setAttribute("aria-pressed", String(+c.dataset.sel === i)); });
+  };
+  logiCards.addEventListener("click", function(e){
+    var c = e.target.closest(".pick"); if(!c) return;
+    if(!logiHost._detail) renderMap(logiHost, false);
+    played.add(logiHost);
+    logiHost._sel = +c.dataset.sel; mapDetail(logiHost);
+    document.getElementById("logiMapWin").scrollIntoView({behavior:reduce ? "auto" : "smooth", block:"start"});
+  });
+
+  /* Pilot timeline */
+  var PHASES = [
+    {t:"Week 1 · Connect and map", end:1, items:["Connect read-only to your agent's logs and repository.","Cairn reads your agent's recent runs.","You get the hand-off map for one workflow."]},
+    {t:"Weeks 2–4 · Fixes and testing", end:4, items:["Each hand-off is diagnosed as fixable or kept with a person.","Cairn writes two or three fixes and replays each on past runs.","Fixes arrive as pull requests, reviewed in the weekly 30-minute call."]},
+    {t:"Weeks 5–6 · Measure and report", end:6, items:["Merged fixes run with kept checks on.","Cairn measures hand-offs and hours before and after.","You get the report and decide whether to continue."]}
+  ];
+  var tl = document.getElementById("timeline"), tlBtns = tl.querySelectorAll("[data-ph]"), tlFill = tl.querySelector(".tl-fill"), tlDot = tl.querySelector(".tl-dot"), tlDet = tl.querySelector(".tl-detail");
+  function setPhase(i){
+    tlBtns.forEach(function(b){ b.setAttribute("aria-selected", String(+b.dataset.ph === i)); });
+    var pct = (PHASES[i].end/6*100) + "%"; tlFill.style.width = pct; tlDot.style.left = pct;
+    tlDet.innerHTML = '<b>' + PHASES[i].t + '</b><ul>' + PHASES[i].items.map(function(x){ return '<li>' + x + '</li>'; }).join("") + '</ul>';
+  }
+  setPhase(0);
+  tl.addEventListener("click", function(e){ var b = e.target.closest("[data-ph]"); if(b){ stop(tl); setPhase(+b.dataset.ph); } });
+  tl.addEventListener("keydown", function(e){
+    if(e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var cur = +tl.querySelector('[aria-selected="true"]').dataset.ph, n = (cur + (e.key === "ArrowRight" ? 1 : 2)) % 3;
+    stop(tl); setPhase(n); tlBtns[n].focus();
+  });
+  onView(tl, function(){ if(reduce) return; later(tl, function(){ setPhase(1); }, 1400); later(tl, function(){ setPhase(2); }, 2800); });
+
+  /* Copy email */
+  document.getElementById("copyEmail").addEventListener("click", function(){
+    var b = this, t = document.getElementById("contactEmail").textContent;
+    function done(ok){ b.textContent = ok ? "Copied" : "Select and copy"; setTimeout(function(){ b.textContent = "Copy"; }, 1600); }
+    try{ navigator.clipboard.writeText(t).then(function(){ done(true); }, function(){ selectText(); done(false); }); }catch(err){ selectText(); done(false); }
+    function selectText(){ var r = document.createRange(); r.selectNodeContents(document.getElementById("contactEmail")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  });
+
+  /* ---------- Methodology pages ---------- */
+  var METHODS = {
+    "map": {g:"Steps", label:"01 Map", title:"How Cairn maps hand-offs", lede:"Cairn finds every point where your agent passed work to a person, using the traces you already collect.",
+      steps:[["Connect read-only","Cairn reads your agent's traces and escalation events: transfers to a queue, tickets created for a person, and runs that end in a handover."],
+             ["Find each hand-off","A run counts as a hand-off when it ends with work assigned to a person instead of a resolution by the agent."],
+             ["Place it on the workflow","Each hand-off is attached to the step where the agent stopped, so you see where in the workflow work leaves the agent."],
+             ["Rank by cost","Steps are ranked by how often they hand off and how much staff time each hand-off takes."]],
+      input:"Agent traces and escalation events, read-only.", output:"A hand-off map for one workflow: steps, volumes and where each hand-off happens.", team:"You choose which workflow to map first.", vis:"pane"},
+    "diagnose": {g:"Steps", label:"02 Diagnose", title:"How Cairn finds the reason behind each hand-off", lede:"Every hand-off gets one of four reasons, with the evidence attached, so you can see why the agent stopped.",
+      steps:[["Reconstruct the run","Cairn rebuilds what the agent saw: its inputs, the records it read and the tools it called."],
+             ["Check what was within reach","It compares that with what the agent could have used: records in connected systems, tools in its toolset and the policy text it follows."],
+             ["Assign one reason","Missing evidence, tool limit, policy boundary or human judgment. Each reason has its own page below."],
+             ["Default to people","When the reason is unclear, the hand-off is labeled human judgment and stays with your team."]],
+      input:"The hand-off map and the runs behind it.", output:"Each hand-off labeled with a reason and the evidence for it.", team:"Your team can relabel any hand-off. Cairn follows your call.", vis:"pane"},
+    "change": {g:"Steps", label:"03 Change", title:"How Cairn writes a fix", lede:"For each fixable cause, Cairn writes one small change in your agent's own repository.",
+      steps:[["One cause per fix","Each change targets a single reason, so it is easy to review and easy to revert."],
+             ["Match the cause","Missing evidence gets a lookup. A tool limit gets a tool scoped to your team's permissions. A cautious rule gets clearer wording with explicit thresholds."],
+             ["Follow your code","Changes follow the structure and conventions already in your repository."],
+             ["Leave boundaries alone","Hand-offs labeled policy boundary or human judgment are never targeted."]],
+      input:"Diagnosed hand-offs and read access to the agent's repository.", output:"A proposed change with the hand-offs it targets.", team:"Nothing is applied until the change is tested and your team approves it.", vis:"pane"},
+    "test": {g:"Steps", label:"04 Test", title:"How sandbox replay works", lede:"Before you see a fix, Cairn replays it against your agent's past runs and compares every outcome.",
+      steps:[["Choose the runs","The replay set includes the hand-offs the fix targets plus runs that did not hand off, to catch side effects."],
+             ["Replay twice","Each run is replayed in a sandbox, once with the original agent and once with the fix. External actions are stubbed, so nothing reaches production."],
+             ["Compare run by run","Each run is marked resolved, unchanged, or changed in some other way."],
+             ["Pass or stop","A fix passes only when other behavior is unchanged and no boundary hand-off became automated."]],
+      input:"The proposed change and a set of past runs.", output:"A run-by-run comparison and a pass or fail result.", team:"You see the full comparison in the pull request.", vis:"pane"},
+    "ship": {g:"Steps", label:"05 Ship", title:"How fixes ship", lede:"A tested fix arrives as a pull request in your repository, like any other change.",
+      steps:[["Open a pull request","The description states why the fix exists, what the replay showed, and what still goes to a person."],
+             ["Run your checks","Your own CI runs on it as it would on any change."],
+             ["Your team decides","Someone on your team reviews and merges it. Cairn never merges."],
+             ["Versioned and reversible","The fix lives in your history. Reverting it is a normal revert."]],
+      input:"A fix that passed sandbox replay.", output:"A pull request with the evidence attached.", team:"Merging is always your team's decision.", vis:"pane"},
+    "monitor": {g:"Steps", label:"06 Monitor", title:"How kept checks work", lede:"Every merged fix stays on as a check, so later versions of your agent can't quietly undo it.",
+      steps:[["Each fix becomes a check","The runs a fix resolved are replayed against every new version of your agent."],
+             ["Boundaries are checks too","Hand-offs that must stay with people are checked as well, so a later change can't automate them."],
+             ["Fail before release","A failing check flags the release before it ships, with the runs that failed."],
+             ["Report","Each release shows which checks ran, which passed, and why any failed."]],
+      input:"Merged fixes and recorded boundaries.", output:"A pass or fail result on every agent release.", team:"You decide whether a flagged release ships.", vis:"pane"},
+
+    "missing-evidence": {g:"Hand-off types", label:"Missing evidence", title:"Missing evidence", lede:"The agent handed off because it didn't have information that existed somewhere it could reach.", kind:"g", verdict:"Usually fixable",
+      steps:[["What Cairn looks for","The answer was in a system the agent can query, or in a record it never opened."],
+             ["How it's confirmed","Cairn checks that the record existed at the time of the run and that the agent had access to it."],
+             ["Typical fix","Add a lookup before the agent escalates, then replay past runs to confirm it resolves them."]],
+      example:"A customer asks to change a delivery. The order history shows the same change was approved before, but the agent never reads it and escalates.", vis:"type"},
+    "tool-limit": {g:"Hand-off types", label:"Tool limit", title:"Tool limit", lede:"The agent knew what needed to happen but had no way to do it.", kind:"g", verdict:"Usually fixable",
+      steps:[["What Cairn looks for","The agent's reasoning reaches the right action, then it escalates because no tool performs that action."],
+             ["How it's confirmed","Cairn checks that the action is one your team performs routinely, through a system the agent could be allowed to use."],
+             ["Typical fix","Add a tool with the same permissions your team uses, then replay past runs."]],
+      example:"The agent has the customer's new address but no tool to update the order, so a person makes a one-field edit.", vis:"type"},
+    "policy-boundary": {g:"Hand-off types", label:"Policy boundary", title:"Policy boundary", lede:"The agent stopped at a rule. Some of these are real limits. Others are rules the agent reads too cautiously.", kind:"r", verdict:"Sometimes fixable",
+      steps:[["Two cases","A real boundary is a limit your team sets on purpose, such as an approval above an amount. A cautious reading is a loosely worded rule the agent applies to cases it doesn't cover."],
+             ["How they're separated","Cairn reads the policy text and how your team resolved similar hand-offs. If people always approve a case, the rule is likely being read too cautiously."],
+             ["What Cairn does","A cautious reading gets clearer wording with explicit thresholds. A real boundary is recorded and kept with a person."]],
+      example:"A refund above the policy limit needs a manager: kept. An appointment-window rule worded loosely, so every edge case escalates: fixable.", vis:"type"},
+    "human-judgment": {g:"Hand-off types", label:"Human judgment", title:"Human judgment", lede:"Some cases need a person: sensitive, ambiguous or high stakes. These stay hand-offs.", kind:"r", verdict:"Kept with a person",
+      steps:[["What Cairn looks for","Signs that a person's judgment is the point: an upset customer, a liability question, conflicting information, or context only a person can get."],
+             ["What Cairn does","Nothing is automated. The hand-off is recorded as part of your decision boundary."],
+             ["How it's protected","A kept check fails if a later version of your agent starts handling these cases on its own."]],
+      example:"An upset customer with a damaged shipment needs a person's judgment and tone.", vis:"type"},
+
+    "handoffs-removed": {g:"Metrics", label:"Hand-offs removed", title:"Avoidable hand-offs removed", lede:"How many fixable hand-offs no longer reach a person, per workflow.",
+      formula:"removed = avoidable hand-offs (before) − avoidable hand-offs (after)",
+      steps:[["Baseline","The hand-off map gives the count of fixable hand-offs over a fixed period before any fix."],
+             ["After","The same count over a period of the same length once fixes are merged."],
+             ["What counts","Only hand-offs labeled missing evidence, tool limit or a cautious rule. Boundary hand-offs are excluded."]], vis:"metric"},
+    "hours-saved": {g:"Metrics", label:"Hours saved", title:"Human hours saved", lede:"The staff time the removed hand-offs used to take.",
+      formula:"hours saved = Σ (hand-offs removed at a step × median handling time at that step)",
+      steps:[["Handling time","Taken from the timestamps in your queue or ticketing system, or from your team's estimate when those don't exist."],
+             ["Per step","Each step uses its own median, since a status check and an exception take very different time."],
+             ["Reported","Per workflow, per month, alongside the hand-off counts it comes from."]], vis:"metric"},
+    "time-to-first-fix": {g:"Metrics", label:"Time to first fix", title:"Time to first fix", lede:"How long it takes from access to the first tested fix in your repository.",
+      formula:"time to first fix = first passing pull request opened − read access granted",
+      steps:[["Start","The clock starts when read-only access is in place."],
+             ["Stop","It stops when the first fix that passed sandbox replay is opened as a pull request."],
+             ["Target","Weeks, not quarters. In a pilot, fixes and testing run in weeks 2 to 4."]], vis:"metric"},
+    "wrong-automation": {g:"Metrics", label:"Wrong-automation rate", title:"Wrong-automation rate", lede:"Cases the agent handled that should have reached a person. Cairn keeps this at zero.",
+      formula:"rate = runs automated that needed a person ÷ runs checked",
+      steps:[["How it's caught","Boundary checks replay hand-offs that must stay with people on every release. Your team's reviews add any case they spot."],
+             ["Target","Zero. Any case found blocks the release or is fixed before it ships again."],
+             ["Reported","With every release, with the runs behind any failure."]], vis:"metric"}
+  };
+  var MGROUPS = {"Steps":["map","diagnose","change","test","ship","monitor"],"Hand-off types":["missing-evidence","tool-limit","policy-boundary","human-judgment"],"Metrics":["handoffs-removed","hours-saved","time-to-first-fix","wrong-automation"]};
+  var methodView = document.getElementById("methodView");
+  function methodHTML(slug){
+    var m = METHODS[slug], sibs = MGROUPS[m.g], i = sibs.indexOf(slug), prev = sibs[(i + sibs.length - 1) % sibs.length], next = sibs[(i + 1) % sibs.length];
+    var vis = "";
+    if(m.vis === "pane"){
+      vis = '<div class="window"><div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>cairn · '+slug+'</div><div class="window-body" data-mpane="'+slug+'"></div></div>';
+    } else if(m.vis === "type"){
+      vis = '<div class="card mcard"><div class="row-between"><span class="chip '+m.kind+'">'+m.label.toLowerCase()+'</span><span class="verdict '+m.kind+'">'+m.verdict+'</span></div><span class="label">Example</span><p>'+m.example+'</p></div>';
+    } else {
+      vis = '<div class="card mcard"><span class="label">Formula</span><div class="code formula">'+esc(m.formula)+'</div><p class="small">Reported per workflow. No figures are shown until a pilot produces them.</p></div>';
+    }
+    return '<section class="sub-hero"><div class="wrap sub-hero-in">'+
+      '<nav class="crumbs" aria-label="Breadcrumb"><a href="#how-it-works">Methodology</a><span aria-hidden="true">/</span><span>'+m.g+'</span></nav>'+
+      '<span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>'+m.label+'</span><h1>'+m.title+'</h1><p class="lede">'+m.lede+'</p>'+
+      '<div class="sibs">'+sibs.map(function(s){ return '<a href="#method-'+s+'"'+(s === slug ? ' aria-current="page"' : '')+'>'+METHODS[s].label.replace(/^\d\d /,"")+'</a>'; }).join("")+'</div></div></section>'+
+      '<div class="wrap"><div class="two-col method-grid"><div class="stack" style="gap:28px"><h3>The method</h3><ol class="msteps">'+
+      m.steps.map(function(s, n){ return '<li class="rise"><span class="mnum">'+String(n+1).padStart(2,"0")+'</span><div><b>'+s[0]+'</b><p>'+s[1]+'</p></div></li>'; }).join("")+'</ol>'+
+      (m.input ? '<div class="grid-2"><div class="card"><span class="label">Input</span><p>'+m.input+'</p></div><div class="card"><span class="label">Output</span><p>'+m.output+'</p></div></div><p class="team-line"><b>Your team:</b> '+m.team+'</p>' : '')+
+      '</div><div class="method-visual">'+vis+'</div></div>'+
+      '<div class="mnav"><a href="#method-'+prev+'" class="mini">← '+METHODS[prev].label+'</a><a href="#method-'+next+'" class="mini">'+METHODS[next].label+' →</a></div></div>'+
+      '<section class="section"><div class="wrap cta"><h2>See it on your own agent.</h2><a class="btn btn-primary" href="#pilot" data-cta="method">Request a pilot</a></div></section>';
+  }
+  function renderMethod(slug){
+    methodView.innerHTML = methodHTML(slug);
+    Array.prototype.forEach.call(methodView.querySelectorAll(".card,.window"), function(n){ n.classList.add("spot"); });
+    Array.prototype.forEach.call(methodView.querySelectorAll("a.btn-primary"), function(a){
+      a.insertAdjacentHTML("beforeend", '<svg class="arrow" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9M7.5 3.5L11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    });
+    var host = methodView.querySelector("[data-mpane]");
+    if(host){ var pv = makePane(slug); host.appendChild(pv); onView(host, function(){ play(pv); }); }
+  }
+  function methodLink(slug, text){ return '<a class="more" href="#method-'+slug+'">'+(text || "Read the method")+' <span aria-hidden="true">→</span></a>'; }
+
+  function typeSlug(t){ return t === "Unclear rule" ? "policy-boundary" : t.toLowerCase().replace(/ /g,"-"); }
+
+  /* Team placeholders */
+  var teamEl = document.getElementById("team");
+  [1,2,3].forEach(function(n){
+    var d = document.createElement("div"); d.className = "person";
+    d.innerHTML = '<div class="avatar">Founder photo</div><div class="stack" style="gap:4px"><b class="todo">Founder '+n+' name</b><span class="small">Role</span></div><p>One line about this founder.</p><a href="#about" class="small">LinkedIn</a>';
+    teamEl.appendChild(d);
+  });
+
+  /* ---------- Demo modal ---------- */
+  var modal = document.getElementById("demoModal"), lastFocus;
+  document.addEventListener("click", function(e){
+    if(e.target.closest("[data-demo]")){
+      lastFocus = document.activeElement; track("demo_plays");
+      if(modal.showModal) modal.showModal(); else modal.setAttribute("open","");
+      document.getElementById("demoClose").focus();
+    }
+  });
+  function closeModal(){ if(modal.close) modal.close(); else modal.removeAttribute("open"); if(lastFocus) lastFocus.focus(); }
+  document.getElementById("demoClose").addEventListener("click", closeModal);
+  modal.addEventListener("click", function(e){ if(e.target === modal) closeModal(); });
+
+  /* ---------- Pilot form ---------- */
+  var form = document.getElementById("pilotForm");
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var ok = true, first = null;
+    Array.prototype.forEach.call(form.querySelectorAll("[required]"), function(inp){
+      var v = inp.value.trim(), bad = !v || (inp.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+      var f = inp.closest(".field"); f.classList.toggle("bad", bad); f.querySelector(".err").hidden = !bad;
+      inp.setAttribute("aria-invalid", bad ? "true" : "false");
+      if(bad){ ok = false; if(!first) first = inp; }
+    });
+    if(!ok){ first.focus(); return; }
+    track("pilot_requests");
+    var name = form.elements.name.value.trim().split(" ")[0];
+    document.getElementById("formWrap").innerHTML =
+      '<div class="form sent" role="status"><div class="check"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>'+
+      '<h2 style="font-size:28px">Thanks, '+name.replace(/[<>&"]/g,"")+'.</h2><p style="color:var(--gray)">Your pilot request is in. We will reply within two working days to set up a 30-minute call about your agent.</p>'+
+      '<p class="small todo">Preview build: this form is not yet connected to the team inbox, so nothing was sent.</p></div>';
+  });
+  form.addEventListener("input", function(e){ var f = e.target.closest(".field"); if(f && f.classList.contains("bad")){ f.classList.remove("bad"); f.querySelector(".err").hidden = true; } });
+
+  /* ---------- Reveal on scroll ---------- */
+  var io = ("IntersectionObserver" in window && !reduce) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.remove("pre"); io.unobserve(en.target); } });
+  }, {rootMargin:"0px 0px -8% 0px"}) : null;
+  function prepReveal(view){
+    if(!io) return;
+    Array.prototype.forEach.call(view.querySelectorAll(".rise"), function(n){
+      var r = n.getBoundingClientRect();
+      if(r.top > window.innerHeight){ n.classList.add("pre"); io.observe(n); }
+    });
+  }
+
+  /* ---------- Interactive dot field ---------- */
+  var cv = document.getElementById("field"), ctx = cv.getContext("2d");
+  var FW = 0, FH = 0, SP = 28, R = 150, ripples = [], col = {};
+  var ptr = {x:0, y:0, tx:0, ty:0, on:false, k:0};
+  function rgb(s){
+    s = (s || "").trim().replace("#","");
+    if(s.length === 3) s = s.split("").map(function(c){ return c + c; }).join("");
+    var n = parseInt(s, 16); return [(n>>16)&255, (n>>8)&255, n&255];
+  }
+  function readColors(){
+    var cs = getComputedStyle(root);
+    col.dot = rgb(cs.getPropertyValue("--muted")); col.hi = rgb(cs.getPropertyValue("--green-text"));
+    col.base = isDark() ? 0.30 : 0.34;
+  }
+  function sizeField(){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    FW = window.innerWidth; FH = window.innerHeight;
+    cv.width = Math.round(FW*dpr); cv.height = Math.round(FH*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    SP = FW < 600 ? 24 : 28; R = FW < 600 ? 130 : 190;
+    readColors(); drawField(performance.now());
+  }
+  function drawField(t){
+    ctx.clearRect(0,0,FW,FH);
+    var k = ptr.k;
+    if(k > 0.01){
+      var g = ctx.createRadialGradient(ptr.x, ptr.y, 0, ptr.x, ptr.y, 320);
+      g.addColorStop(0, "rgba("+col.hi.join(",")+","+(0.10*k)+")"); g.addColorStop(1, "rgba("+col.hi.join(",")+",0)");
+      ctx.fillStyle = g; ctx.fillRect(0,0,FW,FH);
+    }
+    var off = (window.scrollY*0.25) % SP, R2 = R*R, now = t;
+    ripples = ripples.filter(function(r){ return now - r.t0 < 1800; });
+    var basePath = new Path2D(), hot = [];
+    for(var y = -off; y < FH + SP; y += SP){
+      for(var x = (SP/2); x < FW + SP; x += SP){
+        var px = x, py = y, e = 0;
+        var amb = reduce ? 0 : 0.5 + 0.5*Math.sin(x*0.011 + y*0.008 + t*0.0007);
+        if(k > 0.01){
+          var dx = x - ptr.x, dy = y - ptr.y, d2 = dx*dx + dy*dy;
+          if(d2 < R2){ var d = Math.sqrt(d2) || 1, f = 1 - d/R; f = f*f*k; e += f; px += dx/d*f*14; py += dy/d*f*14; }
+        }
+        for(var i = 0; i < ripples.length; i++){
+          var rp = ripples[i], age = (now - rp.t0)/1800, ring = age*Math.max(FW,FH)*0.7;
+          var rx = x - rp.x, ry = y - rp.y, rd = Math.sqrt(rx*rx + ry*ry) || 1, diff = Math.abs(rd - ring);
+          if(diff < 46){ var s = (1 - diff/46)*(1 - age); e += s*0.9; px += rx/rd*s*7; py += ry/rd*s*7; }
+        }
+        if(e < 0.03){ basePath.moveTo(px + 1.05, py); basePath.arc(px, py, 1.05, 0, 6.2832); }
+        else hot.push(px, py, Math.min(1, e), amb);
+      }
+    }
+    ctx.fillStyle = "rgba("+col.dot.join(",")+","+(col.base + (reduce ? 0 : 0.06))+")";
+    ctx.fill(basePath);
+    for(var j = 0; j < hot.length; j += 4){
+      var v = hot[j+2], c0 = col.dot, c1 = col.hi;
+      var c = [Math.round(c0[0] + (c1[0]-c0[0])*v), Math.round(c0[1] + (c1[1]-c0[1])*v), Math.round(c0[2] + (c1[2]-c0[2])*v)];
+      ctx.fillStyle = "rgba("+c.join(",")+","+Math.min(1, col.base + v*0.75)+")";
+      ctx.beginPath(); ctx.arc(hot[j], hot[j+1], 1.05 + v*2.4, 0, 6.2832); ctx.fill();
+    }
+  }
+  var running = false;
+  function loop(t){
+    if(document.hidden){ running = false; return; }
+    ptr.x += (ptr.tx - ptr.x)*0.16; ptr.y += (ptr.ty - ptr.y)*0.16;
+    ptr.k += ((ptr.on ? 1 : 0) - ptr.k)*0.08;
+    drawField(t);
+    requestAnimationFrame(loop);
+  }
+  function start(){ if(!running && !reduce){ running = true; requestAnimationFrame(loop); } }
+  window.addEventListener("pointermove", function(e){
+    if(!ptr.on && ptr.k < 0.05){ ptr.x = e.clientX; ptr.y = e.clientY; }
+    ptr.tx = e.clientX; ptr.ty = e.clientY; ptr.on = true; start();
+  }, {passive:true});
+  document.documentElement.addEventListener("pointerleave", function(){ ptr.on = false; });
+  window.addEventListener("blur", function(){ ptr.on = false; });
+  window.addEventListener("pointerdown", function(e){
+    if(reduce) return;
+    ripples.push({x:e.clientX, y:e.clientY, t0:performance.now()}); if(ripples.length > 5) ripples.shift(); start();
+  }, {passive:true});
+  window.addEventListener("resize", sizeField);
+  window.addEventListener("scroll", function(){ if(reduce) drawField(0); }, {passive:true});
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) start(); });
+  themeBtn.addEventListener("click", function(){ readColors(); if(reduce) drawField(0); });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){ readColors(); syncThemeBtn(); if(reduce) drawField(0); });
+  sizeField(); start();
+
+  /* ---------- Spotlight surfaces + button arrows ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll(".card,.metric,.window,.split,.form"), function(n){ n.classList.add("spot"); });
+  document.addEventListener("pointermove", function(e){
+    var s = e.target.closest && e.target.closest(".spot"); if(!s) return;
+    var r = s.getBoundingClientRect();
+    s.style.setProperty("--mx", (e.clientX - r.left) + "px"); s.style.setProperty("--my", (e.clientY - r.top) + "px");
+  }, {passive:true});
+  Array.prototype.forEach.call(document.querySelectorAll("a.btn-primary"), function(a){
+    a.insertAdjacentHTML("beforeend", '<svg class="arrow" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9M7.5 3.5L11 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  });
+
+  /* ---------- Router ---------- */
+  var TITLES = {"home":"Cairn","how-it-works":"Cairn · How it works","why-cairn":"Cairn · Why Cairn","results":"Cairn · Results","logistics":"Cairn · For logistics","pilot":"Cairn · Pilot","faq":"Cairn · Questions","about":"Cairn · About"};
+  var PAGE_NAMES = {"home":"Home","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Results","logistics":"For logistics","pilot":"Pilot","faq":"Questions","about":"About"};
+  var views = Array.prototype.slice.call(document.querySelectorAll(".view"));
+  var mainEl = document.getElementById("main"), firstRoute = true, routeT, bar = document.createElement("div");
+  bar.className = "route-bar"; bar.setAttribute("aria-hidden","true"); document.body.appendChild(bar);
+  function show(name, h){
+    if(name === "method") renderMethod(h.slice(7));
+    updateBand(name, h);
+    views.forEach(function(v){ v.hidden = v.dataset.view !== name; });
+    document.title = name === "method" ? "Cairn · " + METHODS[h.slice(7)].title : TITLES[name];
+    Array.prototype.forEach.call(document.querySelectorAll("[data-link]"), function(a){
+      if(a.dataset.link === (name === "method" ? "how-it-works" : name)) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+    });
+    menu.hidden = true; menuBtn.setAttribute("aria-expanded","false");
+    window.scrollTo({top:0, left:0, behavior:"instant"});
+    var view = views.filter(function(v){ return !v.hidden; })[0];
+    prepReveal(view);
+    maps.forEach(function(m){ if(m.offsetParent !== null && !m._detail) renderMap(m, false); });
+    maps.forEach(maybePlay);
+    if(name === "pilot" && h === "pilot"){ var fi = document.getElementById("f-name"); if(fi && window.innerWidth > 900) setTimeout(function(){ fi.focus({preventScroll:true}); }, 50); }
+  }
+  function route(){
+    var h = (location.hash || "").replace("#","");
+    if(h === "main") return;
+    var name = TITLES[h] ? h : (h.indexOf("method-") === 0 && METHODS[h.slice(7)] ? "method" : "home");
+    var cur = views.filter(function(v){ return !v.hidden; })[0];
+    if(firstRoute || reduce || (cur && cur.dataset.view === name && name !== "method")){ firstRoute = false; show(name, h); return; }
+    clearTimeout(routeT); (route._t || []).forEach(clearTimeout); route._t = [];
+    var cur2 = document.getElementById("curtain");
+    document.getElementById("cTitle").textContent = name === "method" ? METHODS[h.slice(7)].title : PAGE_NAMES[name];
+    document.getElementById("cLabel").textContent = name === "method" ? "Methodology · " + METHODS[h.slice(7)].g : "Cairn";
+    cur2.className = "curtain"; void cur2.offsetWidth; cur2.className = "curtain in";
+    route._t.push(setTimeout(function(){ show(name, h); mainEl.classList.remove("entering"); }, 520));
+    route._t.push(setTimeout(function(){ cur2.className = "curtain out"; void mainEl.offsetWidth; mainEl.classList.add("entering"); }, 1000));
+    route._t.push(setTimeout(function(){ cur2.className = "curtain"; mainEl.classList.remove("entering"); }, 1650));
+  }
+  /* Scroll-through to the next page */
+  var ORDER = ["home","how-it-works","why-cairn","results","logistics","pilot","faq","about"];
+  var NB_NAMES = {"home":"Back to the start","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Results","logistics":"For logistics","pilot":"Run a pilot","faq":"Questions","about":"About Cairn"};
+  var nbBand = document.getElementById("nextBand"), nbTitle = document.getElementById("nbTitle"), nbHint = document.getElementById("nbHint");
+  var nbAcc = 0, nbLock = false, nbBottomSince = 0, nbDecay, NB_NEED = 260;
+  if(window.matchMedia("(hover: none)").matches) nbHint.textContent = "Keep swiping to continue";
+  function updateBand(name, h){
+    var target, label;
+    if(name === "method"){ var slug = h.slice(7), sib = MGROUPS[METHODS[slug].g], nx = sib[(sib.indexOf(slug) + 1) % sib.length]; target = "method-" + nx; label = METHODS[nx].title; }
+    else { target = ORDER[(ORDER.indexOf(name) + 1) % ORDER.length]; label = NB_NAMES[target]; }
+    nbTitle.href = "#" + target; nbTitle.textContent = label; setNb(0); nbLock = false;
+  }
+  function setNb(v){ nbAcc = Math.max(0, v); nbBand.style.setProperty("--np", Math.min(1, nbAcc/NB_NEED).toFixed(3)); }
+  function atBottom(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4; }
+  function nbGo(){ if(nbLock) return; nbLock = true; setNb(NB_NEED); location.hash = nbTitle.getAttribute("href"); }
+  function nbScheduleDecay(){
+    clearTimeout(nbDecay);
+    nbDecay = setTimeout(function step(){ if(nbLock) return; setNb(nbAcc*0.82 - 8); if(nbAcc > 0) nbDecay = setTimeout(step, 30); }, 450);
+  }
+  window.addEventListener("wheel", function(e){
+    if(nbLock || document.querySelector("dialog[open]")) return;
+    if(!atBottom()){ nbBottomSince = 0; if(nbAcc) setNb(0); return; }
+    if(!nbBottomSince){ nbBottomSince = performance.now(); return; }
+    if(performance.now() - nbBottomSince < 80) return;
+    if(e.deltaY > 0){ setNb(nbAcc + Math.min(e.deltaY, 120)); if(nbAcc >= NB_NEED) nbGo(); else nbScheduleDecay(); }
+    else if(e.deltaY < 0) setNb(0);
+  }, {passive:true});
+  var nbTouchY = null;
+  window.addEventListener("touchstart", function(e){ nbTouchY = atBottom() ? e.touches[0].clientY : null; }, {passive:true});
+  window.addEventListener("touchmove", function(e){
+    if(nbLock) return;
+    if(nbTouchY == null){ if(atBottom()) nbTouchY = e.touches[0].clientY; return; }
+    setNb((nbTouchY - e.touches[0].clientY)*NB_NEED/160);
+  }, {passive:true});
+  window.addEventListener("touchend", function(){ if(nbTouchY != null && nbAcc >= NB_NEED) nbGo(); else if(!nbLock) nbScheduleDecay(); nbTouchY = null; }, {passive:true});
+  window.addEventListener("keydown", function(e){
+    if((e.key === "PageDown" || e.key === " " || e.key === "ArrowDown") && atBottom() && !nbLock && !/INPUT|TEXTAREA|SELECT|BUTTON/.test((document.activeElement || {}).tagName || "")){
+      setNb(nbAcc + 220); if(nbAcc >= NB_NEED) nbGo(); else nbScheduleDecay();
+    }
+  });
+
+  window.addEventListener("hashchange", route);
+  window.addEventListener("scroll", function(){ maps.forEach(maybePlay); }, {passive:true});
+  route();
+})();
+</script>
+</body></html>
