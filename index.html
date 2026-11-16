@@ -749,6 +749,24 @@ body{line-height:1.65}
 .sec-grid .card{padding:24px}
 @media (max-width:900px){.detail{padding-block:48px;gap:28px}.hero-grid,.steps-grid,.two-col{gap:40px}}
 @media (max-width:620px){:root{--section:clamp(56px,14vw,72px)}.head{margin-bottom:32px}.card{padding:22px}.grid-2,.grid-3,.grid-4{gap:16px}}
+
+/* v10: restrained, professional */
+:root{--glow-a:rgba(61,186,128,.08);--glow-b:rgba(147,161,245,.05)}
+:root[data-theme="light"]{--glow-a:rgba(47,122,85,.05);--glow-b:rgba(70,85,166,.04)}
+#field{opacity:.5}
+.eyebrow .pulse{animation:none;box-shadow:none;width:6px;height:6px}
+.btn-primary{box-shadow:none}
+.btn-primary:hover{transform:none;filter:none;background:color-mix(in srgb,var(--green) 88%,white)}
+.card.spot:hover,.metric.spot:hover{transform:none}
+.spot::before,.spot::after{display:none}
+.hero .brand-title{font-size:clamp(60px,8.6vw,124px);letter-spacing:-.045em;gap:clamp(12px,1.4vw,20px);
+  background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink);animation:none}
+.brand-title .mark{width:clamp(46px,6.4vw,92px);height:clamp(46px,6.4vw,92px);border-radius:clamp(12px,1.7vw,24px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.brand-sub{color:var(--gray);letter-spacing:.12em;font-size:12px}
+.hero h1,.hero .hero-h,.sub-hero h1,.h1s{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink)}
+.mark{box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.window{box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 24px 48px -32px rgba(0,0,0,.6)}
+.label{letter-spacing:.12em}
 </style>
 </head><body>
 <canvas id="field" aria-hidden="true"></canvas>
@@ -796,7 +814,6 @@ body{line-height:1.65}
 <div class="view" data-view="home">
 
   <section class="hero" style="position:relative">
-    <span class="field-hint" aria-hidden="true">move or click anywhere</span>
     <div class="wrap brand-top">
       <h1 class="brand-title"><span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><g class="m1"><ellipse cx="10" cy="15.6" rx="8.6" ry="2.7"/></g><g class="m2"><ellipse cx="9" cy="10.5" rx="6.3" ry="2.25" transform="rotate(-6 9 10.5)"/></g><g class="m3"><ellipse cx="11.4" cy="5.8" rx="4.4" ry="1.85" transform="rotate(8 11.4 5.8)"/></g></svg></span>Cairn</h1>
       <span class="brand-sub">Decision boundary infrastructure for AI agents</span>
@@ -1141,7 +1158,7 @@ body{line-height:1.65}
     <div class="wrap sub-hero-in">
       <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>About</span>
       <h1>We're building the layer that decides what agents should do on their own.</h1>
-      <p class="lede">Cairn is built by a team of UC Berkeley students. <span class="todo">Add a two-sentence origin story here, in your own words.</span></p>
+      <p class="lede">Cairn is built by a team of UC Berkeley students.</p>
     </div>
   </section>
   <div class="wrap">
@@ -1153,15 +1170,15 @@ body{line-height:1.65}
         <div class="card rise"><span class="pnum">03</span><h3>Measure in hours.</h3><p>We report hand-offs removed and hours saved, not dashboards.</p></div>
       </div>
     </div>
-    <div class="detail">
+    <div class="detail" id="teamSection" hidden>
       <div class="stack"><span class="label">Team</span><h2 class="h2s">The founders.</h2></div>
       <div class="grid-3" id="team"></div>
     </div>
     <div class="detail">
       <div class="stack"><span class="label">Contact</span><h2 class="h2s">Talk to us.</h2></div>
       <div class="card contact-card">
-        <p>Investors, advisors and candidates: email the team directly. CTOs: the fastest route is a pilot request.</p>
-        <div class="contact-row"><span class="todo mono" id="contactEmail">team@your-domain</span><button type="button" class="mini" id="copyEmail">Copy</button></div>
+        <p>Investors, advisors and candidates: send a note through the pilot form and tell us who you are. CTOs: the fastest route is a pilot request.</p>
+        <div class="contact-row" hidden><span class="todo mono" id="contactEmail">team@your-domain</span><button type="button" class="mini" id="copyEmail">Copy</button></div>
         <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="about">Request a pilot</a></div>
       </div>
     </div>
