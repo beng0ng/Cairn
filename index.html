@@ -856,6 +856,39 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
 .section{padding-block:calc(var(--section) * .78)}
 @media (max-width:640px){.nav-in{padding-left:7px}}
 @media (max-width:640px){footer a,.tag-link,.foot-links a{display:inline-flex;align-items:center;min-height:40px}}
+/* r5: round 5 fixes */
+:root{--err:#F2766B}
+:root[data-theme="light"]{--err:#B42318}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--err:#B42318}}
+.field .err{color:var(--err)}
+.field.bad input,.field.bad textarea,.field.bad select{border-color:var(--err)!important}
+.code .del{color:var(--gray);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--gray) 60%,transparent)}
+.pr-repo{font-size:12px;color:var(--gray);margin-bottom:6px}
+.form-note{color:var(--gray);border-top:1px solid var(--border);padding-top:12px}
+.view:not([data-view="home"]) > .section:has(> .wrap.cta){display:none}
+.view[data-view="method"] .section:has(> .wrap.cta){display:none}
+.nb-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(24px,5vw,72px);align-items:center;text-align:left}
+.nb-cta{display:grid;gap:18px;justify-items:start}
+.nb-cta h2{font-size:clamp(24px,2.6vw,32px);letter-spacing:-.025em;line-height:1.15;max-width:20ch;text-wrap:balance}
+.nb-next{display:grid;gap:14px;justify-items:start}
+.next-band .nb-grid{justify-items:stretch}
+.next-band.solo .nb-grid{grid-template-columns:1fr;justify-items:center;text-align:center}
+.next-band.solo .nb-next{justify-items:center}
+.next-band .nb-cta[hidden]{display:none}
+@media (max-width:760px){.nb-grid{grid-template-columns:1fr}.nb-next{border-top:1px solid var(--border);padding-top:28px}}
+.explore{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px}
+.explore .linkcard{background:none!important;border:0!important;border-top:1px solid var(--border)!important;border-radius:0!important;box-shadow:none!important;padding:20px 0!important;display:grid!important;grid-template-columns:44px 1fr auto;grid-template-areas:"n h m" "n p m";column-gap:16px;row-gap:4px;align-items:baseline}
+.explore .linkcard .pnum{grid-area:n}
+.explore .linkcard h3{grid-area:h;font-size:17px}
+.explore .linkcard p{grid-area:p;font-size:15px;margin:0}
+.explore .linkcard .more{grid-area:m;margin:0;padding:0;align-self:center;font-size:14px}
+@media (max-width:760px){.explore{grid-template-columns:1fr}.explore .linkcard{grid-template-columns:36px 1fr;grid-template-areas:"n h" "n p" "n m"}.explore .linkcard .more{align-self:start;padding-top:6px}}
+.view[data-view="method"] .two-col > :last-child{position:sticky;top:100px;align-self:start}
+.hero .tagline,.brand-sub{text-wrap:balance}
+.stepbar-in{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.window-bar{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:900px){.pane-foot .mini,.seg button,.ui-title .seg button,.method-link,a.more{min-height:40px;display:inline-flex;align-items:center}}
+.form-sum{color:var(--err);margin:0}.form-sum:empty{display:none}
 </style>
 </head><body>
 <canvas id="field" aria-hidden="true"></canvas>
@@ -914,10 +947,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
         <p class="lede">Cairn maps every hand-off your agent makes to a person, fixes the ones it could handle, tests each fix on your past runs, and ships it as a pull request. Judgment calls stay with your team.</p>
         <div class="btn-row">
           <a class="btn btn-primary" href="#pilot" data-cta="hero">Request a pilot</a>
-          <button class="btn btn-secondary" type="button" data-demo>
-            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.25" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 5.2v5.6L11 8z" fill="currentColor"/></svg>
-            Watch the demo
-          </button>
+          <a class="btn btn-secondary" href="#how-it-works">See how it works</a>
         </div>
         <p class="built-for"><span>Built for teams running their own agents in <a href="#logistics">logistics</a>, insurance and healthcare.</span></p>
       </div>
@@ -958,7 +988,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     <div class="wrap">
       <div class="head">
         <span class="label">Explore</span>
-        <h2>Explore how Cairn works.</h2>
+        <h2>Where to go next.</h2>
       </div>
       <div class="grid-3 explore">
         <a class="card rise linkcard" href="#how-it-works"><span class="pnum">01</span><h3>How it works</h3><p>The six steps that turn a hand-off into a tested pull request.</p><span class="more">See the steps <span aria-hidden="true">→</span></span></a>
@@ -997,7 +1027,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     <div class="detail">
       <div class="stack"><span class="label">Why this matters</span><h2 class="h2s">The hand-offs left over are the expensive part.</h2></div>
       <div class="stack">
-        <p>Leading support agents now resolve most conversations on their own. The rest go to a person, and in operational workflows each one costs minutes to hours of staff time.</p>
+        <p>The hand-offs your agent can't finish go to a person, and in operational workflows each one costs minutes to hours of staff time.</p>
         <p>Cairn works on that remainder: it separates the hand-offs your agent could have finished from the ones that should stay with your team.</p>
       </div>
     </div>
@@ -1081,8 +1111,8 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
   <section class="sub-hero">
     <div class="wrap sub-hero-in">
       <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Proof</span>
-      <h1>Every fix is proven on your past runs before you approve it.</h1>
-      <p class="lede">Once a fix ships, we report four numbers for each workflow: hand-offs removed, staff hours saved, time to first fix and wrong automations.</p>
+      <h1>Every fix is tested on your past runs before you approve it.</h1>
+      <p class="lede">For each workflow we report four numbers: hand-offs removed, staff hours saved, time to first fix and wrong automations.</p>
     </div>
   </section>
   <section class="section">
@@ -1106,7 +1136,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       </div>
       <div class="grid-4">
         <a class="metric rise linkcard" href="#method-handoffs-removed"><span class="unit">hand-offs / workflow</span><h3>Avoidable hand-offs removed</h3><p>Compared before and after each fix, for every workflow.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
-        <a class="metric rise linkcard" href="#method-hours-saved"><span class="unit">hours / month</span><h3>Human hours saved</h3><p>Hand-offs removed, multiplied by the staff time each one required.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
+        <a class="metric rise linkcard" href="#method-hours-saved"><span class="unit">hours / month</span><h3>Staff hours saved</h3><p>Hand-offs removed, multiplied by the staff time each one required.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
         <a class="metric rise linkcard" href="#method-time-to-first-fix"><span class="unit">weeks</span><h3>Time to first fix</h3><p>From read access to the first tested pull request. A pilot aims for weeks two to four.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
         <a class="metric rise linkcard" href="#method-wrong-automation"><span class="unit">target: 0</span><h3>Wrong-automation rate</h3><p>Cases that should have reached a person. Our target is zero.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
       </div>
@@ -1123,7 +1153,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
         <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>For logistics</span>
         <h1 class="h1s">For logistics teams whose agents still hand work to dispatchers.</h1>
         <p class="lede">Freight agents book loads, chase carriers and handle exceptions. Many hand-offs come from a missing load-status lookup, a rate confirmation the agent can't read, or a carrier rule it applies too cautiously. Cairn finds those and fixes them, while exceptions that need a dispatcher's judgment stay with your team.</p>
-        <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="logistics-top">Request a pilot</a><button class="btn btn-secondary" type="button" data-demo>Watch the demo</button></div>
+        <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="logistics-top">Request a pilot</a><a class="btn btn-secondary" href="#how-it-works">See how it works</a></div>
       </div>
       <div class="window" id="logiMapWin">
         <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>hand-off map · dispatch agent<a class="tag-link" href="#method-map">Method →</a></div>
@@ -1153,7 +1183,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     <div class="wrap">
       <div class="head" style="margin-bottom:0"><span class="label">Pilot</span><h2>A six-week pilot on one dispatch workflow.</h2></div>
       <ol class="flow">
-        <li><p>We connect with read-only access to your dispatch agent's logs.</p></li>
+        <li><p>We connect with read access to your dispatch agent's logs.</p></li>
         <li><p>We map its hand-offs and deliver two or three tested fixes.</p></li>
         <li><p>You receive a before-and-after report on hand-offs and dispatcher hours.</p></li>
       </ol>
@@ -1189,7 +1219,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
         </div>
         <div class="grid-2">
           <div class="card rise"><h3>What's included</h3><ul class="ticks"><li>The hand-off map for one workflow</li><li>Two or three tested fixes as pull requests</li><li>A before-and-after report on hand-offs and hours saved</li></ul></div>
-          <div class="card rise"><h3>What we need from you</h3><ul class="ticks"><li>Read-only access to your agent's logs</li><li>A repository to open pull requests against</li><li>One engineer for a weekly 30-minute review</li></ul></div>
+          <div class="card rise"><h3>What we need from you</h3><ul class="ticks"><li>Read access to your agent's logs</li><li>A repository to open pull requests against</li><li>One engineer for a weekly 30-minute review</li></ul></div>
         </div>
         <div class="card rise"><h3>Pricing</h3><p>Pilots carry a one-time fee, which is credited toward your subscription if you continue. Subscriptions are billed monthly based on the number of workflows covered. Pricing is agreed on the first call, once we know the workflows involved.</p></div>
       </div>
@@ -1209,8 +1239,10 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
               </select><span class="err" hidden>Choose a range, or "Not sure".</span></div>
             <div class="field"><label for="f-stack">Framework or tracing tool</label><input id="f-stack" name="stack" placeholder="e.g. LangGraph"></div>
           </div>
+          <p class="small form-sum" id="formSum" role="status" aria-live="polite"></p>
           <button class="btn btn-primary" type="submit" style="width:100%">Request a pilot</button>
           <p class="small">We use these details only to reply about a pilot.</p>
+          <p class="small form-note">This site is in preview. The form checks your details but does not send them yet.</p>
         </form>
       </div>
     </div>
@@ -1230,7 +1262,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     <div class="wrap faq-grid">
       <div class="stack" style="align-content:start"><span class="label">Before a pilot</span><h2 class="h2s">Six common questions.</h2></div>
       <div class="faq">
-        <details><summary>What do you need access to?</summary><p>Read-only access to your agent's logs, plus permission to open pull requests in its repository. Cairn never changes production directly and never merges; your team does.</p></details>
+        <details><summary>What do you need access to?</summary><p>Read access to your agent's logs, plus permission to open pull requests in its repository. Cairn never changes production directly and never merges; your team does.</p></details>
         <details><summary>Does it work with our stack?</summary><p>Cairn reads the traces you already collect from common agent frameworks and observability tools. We confirm support for your stack on the first call.</p></details>
         <details><summary>What if a fix is wrong?</summary><p>It's tested on past runs before you see it, and your team approves every merge. Hand-offs that need judgment are never targeted with a fix.</p></details>
         <details><summary>Do we have to replace our observability tool?</summary><p>No. Cairn works alongside your existing observability tools.</p></details>
@@ -1279,11 +1311,14 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
 <div class="view" data-view="method" id="methodView" hidden></div>
 
 <section class="next-band" id="nextBand" aria-label="Next page">
-  <div class="wrap">
+  <div class="wrap nb-grid">
+    <div class="nb-cta" id="nbCta"><h2>Find out which hand-offs your agent could handle.</h2><a class="btn btn-primary" href="#pilot" data-cta="band">Request a pilot</a></div>
+    <div class="nb-next">
     <span class="nb-label">Next</span>
     <a class="nb-title" id="nbTitle" href="#how-it-works">How it works</a>
     <div class="nb-track" aria-hidden="true"><i></i></div>
     <span class="nb-hint"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v8M2.5 6.5L6 10l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="nbHint">Keep scrolling to continue</span></span>
+    </div>
   </div>
 </section>
 
@@ -1444,8 +1479,9 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     host.classList.toggle("has-sel", i != null);
     if(host._onSel) host._onSel(i);
     Array.prototype.forEach.call(host.querySelectorAll(".ho"), function(h){ h.classList.toggle("sel", +h.getAttribute("data-i") === i); h.setAttribute("aria-pressed", String(+h.getAttribute("data-i") === i)); });
-    if(i == null){ d.innerHTML = '<b>Select a hand-off</b><span>Click any tag on the map to see why the agent handed off and what Cairn does about it.</span>'; return; }
+    if(i == null){ d.innerHTML = '<b>Select a hand-off</b><span>Tap or click any tag on the map to see why the agent handed off and what Cairn does about it.</span>'; return; }
     var h = steps[i].h, keep = h.k === "keep";
+    if(window.innerWidth < 900 && host._userSel) setTimeout(function(){ var r = d.getBoundingClientRect(); if(r.bottom > window.innerHeight) d.scrollIntoView({block:"nearest", behavior:reduce ? "auto" : "smooth"}); }, 30);
     d.innerHTML = '<div class="row"><span class="chip '+(keep ? "r" : "g")+'">'+h.type.toLowerCase()+'</span><b>Step '+String(i+1).padStart(2,"0")+' · '+steps[i].t+'</b></div>'+
       '<span><b>Why:</b> '+h.why+'</span><span><b>'+(keep ? "Boundary:" : "Cairn:")+'</b> '+h.fix+'</span>'+methodLink(typeSlug(h.type), "How Cairn handles "+h.type.toLowerCase());
   }
@@ -1461,7 +1497,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       legend.querySelector("[data-map-replay]").addEventListener("click", function(){ host._sel = null; mapDetail(host); renderMap(host, true); });
       var d = document.createElement("div"); d.className = "map-detail"; d.setAttribute("aria-live","polite");
       legend.insertAdjacentElement("afterend", d); host._detail = d;
-      host.addEventListener("click", function(e){ var g = e.target.closest(".ho"); if(!g) return; var i = +g.getAttribute("data-i"); host._sel = i; mapDetail(host); });
+      host.addEventListener("click", function(e){ var g = e.target.closest(".ho"); if(!g) return; var i = +g.getAttribute("data-i"); host._sel = i; host._userSel = true; mapDetail(host); });
       host.addEventListener("keydown", function(e){ if((e.key === "Enter" || e.key === " ") && e.target.closest(".ho")){ e.preventDefault(); e.target.closest(".ho").dispatchEvent(new MouseEvent("click", {bubbles:true})); } });
     }
     if(!animate || reduce){ hos.forEach(settle); host.classList.remove("anim"); mapDetail(host); return; }
@@ -1533,10 +1569,10 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
         '<div class="pane-foot"><span class="pane-msg">Each run is replayed with and without the fix.</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run replay</button></span></div>';
     },
     ship: function(){
-      return '<div class="pr"><div class="pr-head"><span class="badge" data-badge>Open</span><b>#214 Add order-history lookup before escalating</b></div>'+
+      return '<div class="pr"><div class="pr-repo mono">your-org/agent · pull request</div><div class="pr-head"><span class="badge" data-badge>Open</span><b>#214 Add order-history lookup before escalating</b></div>'+
         '<div class="pr-body"><h5>## Why</h5>148 hand-offs in 30 days came from requests the\nagent could answer from the order history.\n<h5>## Tested</h5>Replayed 200 past runs, including all 148: 121\nhand-offs removed, 0 other behavior changed.\n<h5>## Kept with a person</h5>Refunds above the policy limit still escalate.</div>'+
-        '<div class="checks"><div class="chk"><span class="ic">'+CHECK+'</span>Sandbox replay: 121 of 148 hand-offs removed</div><div class="chk"><span class="ic">'+CHECK+'</span>Kept checks: 3 of 3 passing</div><div class="chk"><span class="ic">'+CHECK+'</span>Decision boundary unchanged</div></div></div>'+
-        '<div class="pane-foot"><span class="pane-msg">Running checks…</span><span class="btns"><button type="button" class="mini primary" data-act="approve" disabled>Approve and merge</button></span></div>';
+        '<div class="checks"><div class="chk"><span class="ic">'+CHECK+'</span>Sandbox replay: 121 of 148 hand-offs removed</div><div class="chk"><span class="ic">'+CHECK+'</span>Existing kept checks: 3 of 3 passing</div><div class="chk"><span class="ic">'+CHECK+'</span>Decision boundary unchanged</div></div></div>'+
+        '<div class="pane-foot"><span class="pane-msg">Running checks…</span><span class="btns"><button type="button" class="mini primary" data-act="approve" disabled>Approve as your team</button></span></div>';
     },
     monitor: function(){
       return '<div class="ui-title"><b>Kept checks</b><span>run on every agent release</span></div>'+
@@ -1584,7 +1620,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     ship: function(pv){
       var ks = pv.querySelectorAll(".chk"), btn = pv.querySelector("[data-act=approve]"), badge = pv.querySelector("[data-badge]"), msg = pv.querySelector(".pane-msg");
       ks.forEach(function(k){ k.className = "chk spin"; });
-      badge.textContent = "Open"; badge.classList.remove("merged"); btn.disabled = true; btn.textContent = "Approve and merge"; msg.textContent = "Running checks…"; msg.className = "pane-msg";
+      badge.textContent = "Open"; badge.classList.remove("merged"); btn.disabled = true; btn.textContent = "Approve as your team"; msg.textContent = "Running checks…"; msg.className = "pane-msg";
       ks.forEach(function(k, i){ later(pv, function(){ k.className = "chk ok"; }, 500 + i*550); });
       later(pv, function(){ btn.disabled = false; msg.textContent = "All checks passed. Waiting for your review."; }, 500 + ks.length*550);
     },
@@ -1597,7 +1633,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
         s.className = "st " + (fail ? "bad" : "ok"); s.lastChild.textContent = fail ? "failing" : "passing";
       }, 450 + i*500); });
       later(pv, function(){
-        if(regress){ msg.className = "pane-msg bad"; msg.textContent = "Release blocked: v2.5 would automate refunds that need a person."; }
+        if(regress){ msg.className = "pane-msg bad"; msg.textContent = "Release flagged: v2.5 would automate refunds that need a person. Your team decides whether it ships."; }
         else { msg.className = "pane-msg ok"; msg.textContent = "All 3 checks passing. Release v2.4 is clear."; }
       }, 450 + sts.length*500 + 100);
     },
@@ -1617,7 +1653,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       var a = act.dataset.act;
       if(a === "replay") play(pv);
       else if(a === "regress") play(pv, true);
-      else if(a === "approve"){ var b = pv.querySelector("[data-badge]"); b.textContent = "Merged"; b.classList.add("merged"); act.disabled = true; act.textContent = "Merged"; var m = pv.querySelector(".pane-msg"); m.className = "pane-msg ok"; m.textContent = "Merged. Fix #214 now runs as a kept check."; }
+      else if(a === "approve"){ var b = pv.querySelector("[data-badge]"); b.textContent = "Merged"; b.classList.add("merged"); act.disabled = true; act.textContent = "Merged by your team"; var m = pv.querySelector(".pane-msg"); m.className = "pane-msg ok"; m.textContent = "Your team merged it in your repo. Fix #214 now runs as a kept check."; }
     } else if(row){
       var was = row.classList.contains("sel");
       pv.querySelectorAll("[data-row]").forEach(function(r){ r.classList.remove("sel"); });
@@ -1762,7 +1798,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
 
   /* Pilot timeline */
   var PHASES = [
-    {t:"Week 1 · Connect and map", end:1, items:["We connect with read-only access to your agent's logs and repository.","Cairn reviews your agent's recent runs.","You receive the hand-off map for one workflow."]},
+    {t:"Week 1 · Connect and map", end:1, items:["We connect with read access to your agent's logs and repository.","Cairn reviews your agent's recent runs.","You receive the hand-off map for one workflow."]},
     {t:"Weeks 2–4 · Fixes and testing", end:4, items:["Each hand-off is classified as fixable or kept with a person.","Cairn writes two or three fixes and replays each one on past runs.","Fixes arrive as pull requests and are reviewed in a weekly 30-minute call."]},
     {t:"Weeks 5–6 · Measure and report", end:6, items:["Merged fixes run in production with ongoing checks enabled.","Cairn measures hand-offs and staff hours before and after.","You receive the report and decide whether to continue."]}
   ];
@@ -1929,7 +1965,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
 
   /* ---------- Pilot form ---------- */
   var form = document.getElementById("pilotForm");
-  form.querySelectorAll(".field").forEach(function(f){ var c = f.querySelector("input,textarea,select"), e = f.querySelector(".err"); if(c && e){ e.id = c.id + "-err"; c.setAttribute("aria-describedby", e.id); e.setAttribute("role","alert"); } });
+  form.querySelectorAll(".field").forEach(function(f){ var c = f.querySelector("input,textarea,select"), e = f.querySelector(".err"); if(c && e){ e.id = c.id + "-err"; c.setAttribute("aria-describedby", e.id); } });
   form.addEventListener("submit", function(e){
     e.preventDefault();
     var ok = true, first = null;
@@ -1939,12 +1975,14 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       inp.setAttribute("aria-invalid", bad ? "true" : "false");
       if(bad){ ok = false; if(!first) first = inp; }
     });
+    var sumEl = document.getElementById("formSum"), nBad = form.querySelectorAll(".field.bad").length;
+    sumEl.textContent = ok ? "" : (nBad === 1 ? "1 field needs attention." : nBad + " fields need attention.");
     if(!ok){ first.focus(); return; }
     track("pilot_requests");
     var name = form.elements.name.value.trim().split(" ")[0];
     document.getElementById("formWrap").innerHTML =
       '<div class="form sent" role="status"><div class="check"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>'+
-      '<h2 id="sentH" tabindex="-1" style="font-size:28px;outline:none">Thanks, '+name.replace(/[<>&"]/g,"")+'.</h2><p style="color:var(--gray)">This site is in preview and the form is not connected to our inbox yet, so your request was not sent. When it goes live, every request gets a reply within two working days to set up a 30-minute call about your agent.</p></div>';
+      '<h2 id="sentH" tabindex="-1" style="font-size:28px;outline:none">Your details look complete, '+name.replace(/[<>&"]/g,"")+'.</h2><p style="color:var(--gray)">This preview does not send requests yet, so nothing was submitted. Once the form is live, a request here starts a 30-minute call about your agent.</p></div>';
     var sh = document.getElementById("sentH"); if(sh) sh.focus();
   });
   form.addEventListener("input", function(e){ var f = e.target.closest(".field"); if(f && f.classList.contains("bad")){ f.classList.remove("bad"); f.querySelector(".err").hidden = true; } });
@@ -2070,19 +2108,25 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     views.forEach(function(v){ v.hidden = v.dataset.view !== name; });
     nwrap(document.querySelector('.view[data-view="'+name+'"]'));
     if(name === "how-it-works" && window.cairnMarkStep) setTimeout(function(){ if(window.scrollY < 300) window.cairnMarkStep("how-map"); }, 60);
+    document.getElementById("nbCta").hidden = name === "home" || name === "pilot"; nbBand.classList.toggle("solo", name === "home" || name === "pilot");
     var hintRow = document.getElementById("nbHint").parentNode; hintRow.hidden = name === "pilot"; document.querySelector("#nextBand .nb-track").hidden = name === "pilot";
     document.title = name === "method" ? "Cairn · " + METHODS[h.slice(7)].title : TITLES[name];
     Array.prototype.forEach.call(document.querySelectorAll("[data-link]"), function(a){
       if(a.dataset.link === (name === "method" ? "how-it-works" : name)) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
     });
-    menu.hidden = true; menuBtn.setAttribute("aria-expanded","false");
+    menu.hidden = true; menuBtn.setAttribute("aria-expanded","false"); menuBtn.setAttribute("aria-label","Open menu");
+    var back = !navByClick && SCROLLS[h] ? SCROLLS[h] : 0; navByClick = false; curHash = h;
     window.scrollTo({top:0, left:0, behavior:"instant"});
+    if(back) setTimeout(function(){ window.scrollTo({top:back, left:0, behavior:"instant"}); }, 30);
     var view = views.filter(function(v){ return !v.hidden; })[0];
     prepReveal(view);
     maps.forEach(function(m){ if(m.offsetParent !== null && !m._detail) renderMap(m, false); });
     maps.forEach(maybePlay);
-    if(name === "pilot" && h === "pilot"){ var fi = document.getElementById("f-name"); if(fi && window.innerWidth > 900) setTimeout(function(){ fi.focus({preventScroll:true}); }, 50); }
+    if(name === "pilot" && h === "pilot" && ctaNav){ var fi = document.getElementById("f-name"); if(fi && window.innerWidth > 900) setTimeout(function(){ fi.focus({preventScroll:true}); }, 50); }
   }
+  var SCROLLS = {}, navByClick = false, ctaNav = false, curHash = null;
+  document.addEventListener("click", function(e){ var a = e.target.closest("a[href^='#']"); if(a){ navByClick = true; ctaNav = !!a.closest("[data-cta]") || a.hasAttribute("data-cta"); } }, true);
+  window.addEventListener("scroll", function(){ if(curHash != null) SCROLLS[curHash] = window.scrollY; }, {passive:true});
   function route(){
     var h = (location.hash || "").replace("#","");
     if(h === "main") return;
@@ -2104,7 +2148,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
   var NB_NAMES = {"home":"Back to the start","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Proof","logistics":"For logistics","pilot":"Run a pilot","faq":"Questions","about":"About Cairn"};
   var nbBand = document.getElementById("nextBand"), nbTitle = document.getElementById("nbTitle"), nbHint = document.getElementById("nbHint");
   var nbAcc = 0, nbLock = false, nbBottomSince = 0, nbDecay, NB_NEED = 600, nbLastWheel = 0, nbGesture = false;
-  if(window.matchMedia("(hover: none)").matches) nbHint.textContent = "Keep swiping to continue";
+  nbHint.textContent = window.matchMedia("(hover: none)").matches ? "Swipe up again to continue" : "Scroll again to continue";
   function updateBand(name, h){
     var target, label;
     if(name === "method"){ var slug = h.slice(7), sib = MGROUPS[METHODS[slug].g], nx = sib[(sib.indexOf(slug) + 1) % sib.length]; target = "method-" + nx; label = METHODS[nx].title; }
