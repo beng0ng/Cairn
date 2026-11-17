@@ -837,6 +837,25 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
 .demo-soon h3{font-size:22px}
 .demo-soon p{color:var(--gray);max-width:56ch}
 dialog.modal{max-width:min(560px,calc(100vw - 32px))}
+/* r4: round 4 fixes */
+.curtain,.curtain.in,.curtain.out{clip-path:none!important}
+.curtain{opacity:0}
+.curtain.in{visibility:visible;opacity:1;transition:opacity .16s ease-out!important}
+.curtain.out{visibility:visible;opacity:0;transition:opacity .28s ease-in!important}
+.curtain .mark g{opacity:1!important;transform:none!important;animation:none!important}
+.curtain .mark{transform:scale(.94);transition:transform .3s ease-out}
+.curtain.in .mark{transform:scale(1)}
+main.entering .view:not([hidden]) > *{animation-duration:.45s}
+.field input,.field textarea,.field select{scroll-margin-top:120px}
+:focus-visible{outline-color:var(--green-text)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--green-text);box-shadow:0 0 0 3px color-mix(in srgb,var(--green-text) 22%,transparent);outline:none}
+.metric.linkcard,.card.linkcard{display:flex;flex-direction:column}
+.linkcard .more{margin-top:auto;padding-top:12px}
+:root[data-theme="light"] .btn-secondary{border:1px solid var(--border)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn-secondary{border:1px solid var(--border)}}
+.section{padding-block:calc(var(--section) * .78)}
+@media (max-width:640px){.nav-in{padding-left:7px}}
+@media (max-width:640px){footer a,.tag-link,.foot-links a{display:inline-flex;align-items:center;min-height:40px}}
 </style>
 </head><body>
 <canvas id="field" aria-hidden="true"></canvas>
@@ -916,13 +935,13 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     <div class="wrap">
       <div class="head">
         <span class="label">The problem</span>
-        <h2>A quarter or more of your agent's work still lands on a person.</h2>
-        <p class="lede">The leading support agents now resolve about three in four conversations on their own. Some of the remainder genuinely needs a person, but much of it reaches your team only because the agent could not finish the task.</p>
+        <h2>Every hand-off your agent makes lands on a person.</h2>
+        <p class="lede">Some of those hand-offs need a person. Many reach your team only because the agent was missing a lookup, a tool or a clearly worded rule.</p>
       </div>
       <div class="grid-3">
         <a class="card rise linkcard" href="#method-missing-evidence"><span class="chip">missing evidence</span><h3>Information it never checked</h3><p>The answer was in a record the agent never consulted.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
         <a class="card rise linkcard" href="#method-tool-limit"><span class="chip">tool limit</span><h3>An action it cannot take</h3><p>The agent identifies the problem but has no way to act on it.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
-        <a class="card rise linkcard" href="#method-policy-boundary"><span class="chip">unclear rule</span><h3>A rule it applies too cautiously</h3><p>An ambiguous policy leads the agent to escalate by default.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#method-policy-boundary"><span class="chip">policy · unclear rule</span><h3>A rule it applies too cautiously</h3><p>An ambiguous policy leads the agent to escalate by default.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
       </div>
     </div>
   </section>
@@ -985,7 +1004,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     <div class="detail wide">
       <div class="stack"><span class="label">Security</span><h2 class="h2s">Your team stays in control.</h2></div>
       <div class="grid-3 sec-grid">
-        <div class="card rise"><span class="chip g">read-only</span><h3>Read-only access</h3><p>Cairn reads your agent's logs and repository. Its only write access is opening pull requests on a branch, and it never merges.</p></div>
+        <div class="card rise"><span class="chip g">scoped access</span><h3>Read access, pull requests only</h3><p>Cairn reads your agent's logs and repository. Its only write access is opening pull requests on a branch, and it never merges.</p></div>
         <div class="card rise"><span class="chip g">pull requests</span><h3>No production changes</h3><p>Every change arrives as a pull request in your repository.</p></div>
         <div class="card rise"><span class="chip g">your approval</span><h3>Your team merges</h3><p>Nothing ships until someone on your team approves it.</p></div>
       </div>
@@ -1013,7 +1032,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
       <div class="split rise">
         <div class="t">
           <div class="hd"><h3>Cairn tests</h3><span class="chip g">fixable</span></div>
-          <ul><li><a href="#method-missing-evidence">Missed lookups</a></li><li><a href="#method-tool-limit">Missing tools</a></li><li><a href="#method-policy-boundary">Unclear rules</a></li></ul>
+          <ul><li><a href="#method-missing-evidence">Missed lookups</a></li><li><a href="#method-tool-limit">Missing tools</a></li><li><a href="#method-policy-boundary">Unclearly worded rules</a></li></ul>
         </div>
         <div class="k">
           <div class="hd"><h3>Kept with a person</h3><span class="chip r">decision boundary</span></div>
@@ -1062,8 +1081,8 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
   <section class="sub-hero">
     <div class="wrap sub-hero-in">
       <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Proof</span>
-      <h1>Validated on your past runs and measured in hours saved.</h1>
-      <p class="lede">Every fix is replayed against real runs before you approve it. Once it ships, we report four metrics for each workflow.</p>
+      <h1>Every fix is proven on your past runs before you approve it.</h1>
+      <p class="lede">Once a fix ships, we report four numbers for each workflow: hand-offs removed, staff hours saved, time to first fix and wrong automations.</p>
     </div>
   </section>
   <section class="section">
@@ -1083,12 +1102,12 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     <div class="wrap">
       <div class="head">
         <span class="label">What you measure</span>
-        <h2>Results measured in hours saved.</h2>
+        <h2>Four numbers we report for each workflow.</h2>
       </div>
       <div class="grid-4">
         <a class="metric rise linkcard" href="#method-handoffs-removed"><span class="unit">hand-offs / workflow</span><h3>Avoidable hand-offs removed</h3><p>Compared before and after each fix, for every workflow.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
         <a class="metric rise linkcard" href="#method-hours-saved"><span class="unit">hours / month</span><h3>Human hours saved</h3><p>Hand-offs removed, multiplied by the staff time each one required.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
-        <a class="metric rise linkcard" href="#method-time-to-first-fix"><span class="unit">weeks</span><h3>Time to first fix</h3><p>Measured in weeks from the start of a pilot.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
+        <a class="metric rise linkcard" href="#method-time-to-first-fix"><span class="unit">weeks</span><h3>Time to first fix</h3><p>From read access to the first tested pull request. A pilot aims for weeks two to four.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
         <a class="metric rise linkcard" href="#method-wrong-automation"><span class="unit">target: 0</span><h3>Wrong-automation rate</h3><p>Cases that should have reached a person. Our target is zero.</p><span class="more">How it's measured <span aria-hidden="true">→</span></span></a>
       </div>
     </div>
@@ -1125,7 +1144,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
       <div class="grid-4" id="logiCards">
         <button type="button" class="card pick rise" data-sel="1"><span class="chip g">tool limit</span><h3>No load-status lookup</h3><p>The status was available in your TMS, but the agent could not query it.</p></button>
         <button type="button" class="card pick rise" data-sel="2"><span class="chip g">tool limit</span><h3>Unreadable rate confirmations</h3><p>Rate confirmations arrive as PDFs that the agent cannot parse.</p></button>
-        <button type="button" class="card pick rise" data-sel="3"><span class="chip g">unclear rule</span><h3>Overly cautious carrier rules</h3><p>A loosely worded appointment rule sends every edge case to a person.</p></button>
+        <button type="button" class="card pick rise" data-sel="3"><span class="chip g">policy · unclear rule</span><h3>Overly cautious carrier rules</h3><p>A loosely worded appointment rule sends every edge case to a person.</p></button>
         <button type="button" class="card pick rise" data-sel="4"><span class="chip r">kept with a dispatcher</span><h3>Damaged freight</h3><p>Claims and liability decisions remain with your team.</p></button>
       </div>
     </div>
@@ -1176,7 +1195,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
       </div>
       <div id="formWrap" class="form-sticky">
         <form class="form" id="pilotForm" novalidate>
-          <div class="stack" style="gap:6px"><h2 style="font-size:28px">Request a pilot</h2><p class="small">We reply within two working days.</p></div>
+          <div class="stack" style="gap:6px"><h2 style="font-size:28px">Request a pilot</h2><p class="small">Tell us about your agent and the workflow you want to start with.</p></div>
           <div class="row-2">
             <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required><span class="err" hidden>Enter your name.</span></div>
             <div class="field"><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" required><span class="err" hidden>Enter a work email, like you@company.com.</span></div>
@@ -1216,7 +1235,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
         <details><summary>What if a fix is wrong?</summary><p>It's tested on past runs before you see it, and your team approves every merge. Hand-offs that need judgment are never targeted with a fix.</p></details>
         <details><summary>Do we have to replace our observability tool?</summary><p>No. Cairn works alongside your existing observability tools.</p></details>
         <details><summary>How is it priced?</summary><p>A one-time pilot fee, followed by a monthly subscription based on the number of workflows covered.</p></details>
-        <details><summary>Who's behind Cairn?</summary><p>A team from UC Berkeley. See <a href="#about">About</a>.</p></details>
+        <details><summary>Who's behind Cairn?</summary><p>Cairn was founded at UC Berkeley. The founders join the first call for every pilot.</p></details>
       </div>
     </div>
   </section>
@@ -1248,7 +1267,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     <div class="detail">
       <div class="stack"><span class="label">Contact</span><h2 class="h2s">Talk to us.</h2></div>
       <div class="card contact-card">
-        <p>Investors, advisors and candidates can reach us through the pilot form; please mention your role. For engineering leaders, a pilot request is the fastest way to start.</p>
+        <p>For engineering leaders, a pilot request is the fastest way to start.</p>
         <div class="contact-row" hidden><span class="todo mono" id="contactEmail">team@your-domain</span><button type="button" class="mini" id="copyEmail">Copy</button></div>
         <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="about">Request a pilot</a></div>
       </div>
@@ -1289,7 +1308,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
 <dialog class="modal" id="demoModal" aria-labelledby="demoTitle">
   <div class="modal-in">
     <div class="modal-bar"><span id="demoTitle">Product walkthrough</span>
-      <button class="icon-btn" type="button" id="demoClose" aria-label="Close video"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      <button class="icon-btn" type="button" id="demoClose" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6"/></svg></button>
     </div>
     <div class="demo-soon">
       <h3>The walkthrough video is in production.</h3>
@@ -1334,6 +1353,8 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     menuBtn.setAttribute("aria-expanded", String(open));
     menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !menu.hidden){ menu.hidden = true; menuBtn.setAttribute("aria-expanded","false"); menuBtn.setAttribute("aria-label","Open menu"); menuBtn.focus(); } });
+  document.querySelector(".skip").addEventListener("click", function(e){ e.preventDefault(); var m = document.getElementById("main"); m.setAttribute("tabindex","-1"); m.style.outline = "none"; m.focus(); });
 
   /* ---------- Timing helpers ---------- */
   function later(el, fn, ms){ el._t = el._t || []; el._t.push(setTimeout(fn, reduce ? 0 : ms)); }
@@ -1362,9 +1383,9 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     ],
     logistics: [
       {t:"Receive the load tender"},
-      {t:"Check load status", h:{r:"No load-status lookup", k:"test", type:"Missing evidence", why:"The load status was in your TMS, but the agent had no way to query it.", fix:"Cairn adds a load-status lookup and replays past tenders to prove it."}},
+      {t:"Check load status", h:{r:"No load-status lookup", k:"test", type:"Tool limit", why:"The load status was in your TMS, but the agent had no way to query it.", fix:"Cairn adds a load-status lookup and replays past tenders to prove it."}},
       {t:"Read the rate confirmation", h:{r:"Can't read the rate confirmation PDF", k:"test", type:"Tool limit", why:"Rate confirmations arrive as PDFs the agent can't parse.", fix:"Cairn adds a rate-confirmation parser and checks it against past loads."}},
-      {t:"Apply carrier rules", h:{r:"Reads a carrier rule too cautiously", k:"test", type:"Unclear rule", why:"An appointment-window rule is worded loosely, so the agent escalates every edge case.", fix:"Cairn rewrites the rule with explicit thresholds, then replays past loads."}},
+      {t:"Apply carrier rules", h:{r:"Reads a carrier rule too cautiously", k:"test", type:"Policy boundary · unclear rule", why:"An appointment-window rule is worded loosely, so the agent escalates every edge case.", fix:"Cairn rewrites the rule with explicit thresholds, then replays past loads."}},
       {t:"Handle exceptions", h:{r:"Damaged freight needs a call", k:"keep", who:"Kept with a dispatcher", type:"Human judgment", why:"Damaged freight means a claim, a customer call and a judgment on liability.", fix:"Kept with a dispatcher. Cairn marks the boundary and keeps it."}},
       {t:"Book and confirm"}
     ]
@@ -1469,7 +1490,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
   /* ---------- Product panes (shared by home + How it works) ---------- */
   var STEPS = [
     {id:"map", label:"01 Map", title:"Map every hand-off.", line:"Cairn reviews your agent's runs and identifies each task that was passed to a person.", win:"cairn · map"},
-    {id:"diagnose", label:"02 Diagnose", title:"Diagnose the cause.", line:"Each hand-off is classified as missing evidence, a missing tool, a policy boundary or a genuine judgment call.", win:"cairn · diagnose"},
+    {id:"diagnose", label:"02 Diagnose", title:"Diagnose the cause.", line:"Each hand-off is classified as missing evidence, a tool limit, a policy boundary or a human judgment call.", win:"cairn · diagnose"},
     {id:"change", label:"03 Change", title:"Write the fix.", line:"Fixable causes get a targeted change: a new lookup, a new tool or a clearer rule.", win:"cairn · change"},
     {id:"test", label:"04 Test", title:"Test on past runs.", line:"Each change is replayed in a sandbox and compared with the original behavior.", win:"cairn · test"},
     {id:"ship", label:"05 Ship", title:"Ship for approval.", line:"Each fix arrives as a pull request, reviewed and versioned like any other code.", win:"cairn · ship"},
@@ -1508,13 +1529,13 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     test: function(){
       return '<div class="ui-title"><b>Sandbox replay · fix #214</b><span class="st" data-status><span class="ic">'+CHECK+'</span><span>ready</span></span></div>'+
         '<div class="prog"><i></i></div>'+
-        '<div class="kv"><div><b data-count="200">0</b><span>past runs replayed</span></div><div><b data-count="37">0</b><span>hand-offs removed</span></div><div><b data-count="0">0</b><span>other behavior changed</span></div></div>'+
+        '<div class="kv"><div><b data-count="200">0</b><span>past runs replayed</span></div><div><b data-count="121">0</b><span>of 148 hand-offs removed</span></div><div><b data-count="0">0</b><span>other behavior changed</span></div></div>'+
         '<div class="pane-foot"><span class="pane-msg">Each run is replayed with and without the fix.</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run replay</button></span></div>';
     },
     ship: function(){
       return '<div class="pr"><div class="pr-head"><span class="badge" data-badge>Open</span><b>#214 Add order-history lookup before escalating</b></div>'+
-        '<div class="pr-body"><h5>## Why</h5>148 hand-offs in 30 days came from requests the\nagent could answer from the order history.\n<h5>## Tested</h5>Replayed 200 past runs: 37 hand-offs removed,\n0 other behavior changed.\n<h5>## Kept with a person</h5>Refunds above the policy limit still escalate.</div>'+
-        '<div class="checks"><div class="chk"><span class="ic">'+CHECK+'</span>Sandbox replay: 37 hand-offs removed</div><div class="chk"><span class="ic">'+CHECK+'</span>Kept checks: 3 of 3 passing</div><div class="chk"><span class="ic">'+CHECK+'</span>Decision boundary unchanged</div></div></div>'+
+        '<div class="pr-body"><h5>## Why</h5>148 hand-offs in 30 days came from requests the\nagent could answer from the order history.\n<h5>## Tested</h5>Replayed 200 past runs, including all 148: 121\nhand-offs removed, 0 other behavior changed.\n<h5>## Kept with a person</h5>Refunds above the policy limit still escalate.</div>'+
+        '<div class="checks"><div class="chk"><span class="ic">'+CHECK+'</span>Sandbox replay: 121 of 148 hand-offs removed</div><div class="chk"><span class="ic">'+CHECK+'</span>Kept checks: 3 of 3 passing</div><div class="chk"><span class="ic">'+CHECK+'</span>Decision boundary unchanged</div></div></div>'+
         '<div class="pane-foot"><span class="pane-msg">Running checks…</span><span class="btns"><button type="button" class="mini primary" data-act="approve" disabled>Approve and merge</button></span></div>';
     },
     monitor: function(){
@@ -1714,6 +1735,8 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
       else b.removeAttribute("aria-current");
     });
   }
+  window.cairnMarkStep = markStep;
+  window.addEventListener("scroll", function(){ if(window.scrollY < 120 && stepbar.offsetParent) markStep("how-map"); }, {passive:true});
   stepbar.addEventListener("click", function(e){
     var b = e.target.closest("button"); if(!b) return;
     markStep(b.dataset.target);
@@ -1844,7 +1867,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     "wrong-automation": {g:"Metrics", label:"Wrong-automation rate", title:"How the wrong-automation rate is measured", lede:"Cases the agent handled that should have reached a person. The target is zero.",
       formula:"rate = runs automated that needed a person ÷ runs checked",
       steps:[["How it's caught","Boundary checks replay hand-offs that must stay with people on every release. Your team's reviews add any case they spot."],
-             ["Target","The target is zero. Any case found blocks the release or is fixed before it ships again."],
+             ["Target","The target is zero. Any case found flags the release for your team and is fixed before the change ships again."],
              ["Reported","The rate is reported with every release, together with the runs behind any failure."]], vis:"metric"}
   };
   var MGROUPS = {"Steps":["map","diagnose","change","test","ship","monitor"],"Hand-off types":["missing-evidence","tool-limit","policy-boundary","human-judgment"],"Metrics":["handoffs-removed","hours-saved","time-to-first-fix","wrong-automation"]};
@@ -1881,7 +1904,7 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
   }
   function methodLink(slug, text){ return '<a class="more" href="#method-'+slug+'">'+(text || "Read the method")+' <span aria-hidden="true">→</span></a>'; }
 
-  function typeSlug(t){ return t === "Unclear rule" ? "policy-boundary" : t.toLowerCase().replace(/ /g,"-"); }
+  function typeSlug(t){ return t.indexOf("Policy boundary") === 0 ? "policy-boundary" : t.toLowerCase().replace(/ /g,"-"); }
 
   /* Team placeholders */
   var teamEl = document.getElementById("team");
@@ -1902,10 +1925,11 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
   });
   function closeModal(){ if(modal.close) modal.close(); else modal.removeAttribute("open"); if(lastFocus) lastFocus.focus(); }
   document.getElementById("demoClose").addEventListener("click", closeModal);
-  modal.addEventListener("click", function(e){ if(e.target === modal || e.target.closest("[data-close-demo]")){ if(modal.close) modal.close(); else modal.removeAttribute("open"); } });
+  modal.addEventListener("click", function(e){ if(e.target === modal) closeModal(); else if(e.target.closest("[data-close-demo]")){ if(modal.close) modal.close(); else modal.removeAttribute("open"); } });
 
   /* ---------- Pilot form ---------- */
   var form = document.getElementById("pilotForm");
+  form.querySelectorAll(".field").forEach(function(f){ var c = f.querySelector("input,textarea,select"), e = f.querySelector(".err"); if(c && e){ e.id = c.id + "-err"; c.setAttribute("aria-describedby", e.id); e.setAttribute("role","alert"); } });
   form.addEventListener("submit", function(e){
     e.preventDefault();
     var ok = true, first = null;
@@ -2045,6 +2069,8 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     updateBand(name, h);
     views.forEach(function(v){ v.hidden = v.dataset.view !== name; });
     nwrap(document.querySelector('.view[data-view="'+name+'"]'));
+    if(name === "how-it-works" && window.cairnMarkStep) setTimeout(function(){ if(window.scrollY < 300) window.cairnMarkStep("how-map"); }, 60);
+    var hintRow = document.getElementById("nbHint").parentNode; hintRow.hidden = name === "pilot"; document.querySelector("#nextBand .nb-track").hidden = name === "pilot";
     document.title = name === "method" ? "Cairn · " + METHODS[h.slice(7)].title : TITLES[name];
     Array.prototype.forEach.call(document.querySelectorAll("[data-link]"), function(a){
       if(a.dataset.link === (name === "method" ? "how-it-works" : name)) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
@@ -2068,9 +2094,9 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     document.getElementById("cTitle").textContent = name === "method" ? METHODS[h.slice(7)].title : PAGE_NAMES[name];
     document.getElementById("cLabel").textContent = name === "method" ? "Methodology · " + METHODS[h.slice(7)].g : "Cairn";
     cur2.className = "curtain"; void cur2.offsetWidth; cur2.className = "curtain in";
-    route._t.push(setTimeout(function(){ show(name, h); mainEl.classList.remove("entering"); }, 260));
-    route._t.push(setTimeout(function(){ cur2.className = "curtain out"; void mainEl.offsetWidth; mainEl.classList.add("entering"); focusH1(); }, 380));
-    route._t.push(setTimeout(function(){ cur2.className = "curtain"; mainEl.classList.remove("entering"); }, 900));
+    route._t.push(setTimeout(function(){ show(name, h); mainEl.classList.remove("entering"); }, 170));
+    route._t.push(setTimeout(function(){ cur2.className = "curtain out"; void mainEl.offsetWidth; mainEl.classList.add("entering"); focusH1(); }, 200));
+    route._t.push(setTimeout(function(){ cur2.className = "curtain"; mainEl.classList.remove("entering"); }, 700));
   }
   function focusH1(){ var v = views.filter(function(x){ return !x.hidden; })[0]; var h1 = v && v.querySelector("h1"); if(h1){ h1.setAttribute("tabindex","-1"); h1.style.outline="none"; try{ h1.focus({preventScroll:true}); }catch(e){} } }
   /* Scroll-through to the next page */
@@ -2103,11 +2129,12 @@ dialog.modal{max-width:min(560px,calc(100vw - 32px))}
     else if(e.deltaY < 0) setNb(0);
   }, {passive:true});
   var nbTouchY = null;
-  window.addEventListener("touchstart", function(e){ nbTouchY = atBottom() ? e.touches[0].clientY : null; }, {passive:true});
+  var nbAtBottomT = 0; window.addEventListener("scroll", function(){ if(atBottom()){ if(!nbAtBottomT) nbAtBottomT = performance.now(); } else nbAtBottomT = 0; }, {passive:true});
+  window.addEventListener("touchstart", function(e){ nbTouchY = (atBottom() && nbAtBottomT && performance.now() - nbAtBottomT > 300) ? e.touches[0].clientY : null; }, {passive:true});
   window.addEventListener("touchmove", function(e){
     if(nbLock) return;
-    if(nbTouchY == null){ if(atBottom()) nbTouchY = e.touches[0].clientY; return; }
-    if(location.hash === "#pilot") return; setNb((nbTouchY - e.touches[0].clientY)*NB_NEED/220);
+    if(nbTouchY == null) return;
+    if(location.hash === "#pilot") return; setNb((nbTouchY - e.touches[0].clientY)*NB_NEED/320);
   }, {passive:true});
   window.addEventListener("touchend", function(){ if(nbTouchY != null && nbAcc >= NB_NEED) nbGo(); else if(!nbLock) nbScheduleDecay(); nbTouchY = null; }, {passive:true});
   window.addEventListener("keydown", function(e){
