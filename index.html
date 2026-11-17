@@ -1549,36 +1549,36 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       return '<div class="ui-title"><b>Hand-offs · order-changes agent</b><span>last 30 days</span></div>'+
         '<div class="scroll-x"><table class="ui-table hov"><thead><tr><th>Step</th><th>Reason found</th><th class="n">Hand-offs</th></tr></thead><tbody>'+
         MAP_ROWS.map(function(r, i){ return '<tr class="rv" data-row="'+i+'" tabindex="0"><td>'+r[0]+'</td><td>'+r[1]+'</td><td class="n"><span data-count="'+r[2]+'">0</span></td></tr>'; }).join("")+
-        '</tbody></table></div><div class="pane-foot"><span class="pane-msg">Click a row to see its diagnosis.</span></div>';
+        '</tbody></table></div><div class="pane-foot"><span role="status" class="pane-msg">Click a row to see its diagnosis.</span></div>';
     },
     diagnose: function(){
       return '<div class="ui-title"><b>Why the agent handed off</b><span class="seg" role="group" aria-label="Filter"><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="fix" aria-pressed="false">Fixable</button><button type="button" data-f="keep" aria-pressed="false">Boundary</button></span></div>'+
         '<div class="scroll-x"><table class="ui-table"><tbody>'+
         DIAG_ROWS.map(function(r){ return '<tr data-g="'+r[3]+'"><td><span class="chip '+r[1]+'">'+r[0]+'</span></td><td style="width:42%"><div class="bar"><i data-w="'+Math.round(r[2]/354*100)+'" style="background:var('+(r[1]==="g" ? "--green" : "--clay")+')"></i></div></td><td class="n"><span data-count="'+r[2]+'">0</span><span class="pct">'+Math.round(r[2]/354*100)+'%</span></td></tr>'; }).join("")+
-        '</tbody></table></div><div class="pane-foot"><span class="pane-msg">354 hand-offs · 244 fixable, 110 kept with a person</span></div>';
+        '</tbody></table></div><div class="pane-foot"><span role="status" class="pane-msg">354 hand-offs · 244 fixable, 110 kept with a person</span></div>';
     },
     change: function(){
       return '<div class="ui-title"><b>Proposed change · add order-history lookup</b><span class="seg" role="group" aria-label="View"><button type="button" data-mode="diff" aria-pressed="true">Diff</button><button type="button" data-mode="result" aria-pressed="false">Result</button></span></div>'+
         '<div class="code">'+CODE.map(function(l){ return '<span class="ln '+l[0]+'">'+esc(l[1])+'</span>'; }).join("")+'</div>'+
-        '<div class="pane-foot"><span class="pane-msg mono">agent/tools/orders.py · +4 −1</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Rewrite</button></span></div>';
+        '<div class="pane-foot"><span role="status" class="pane-msg mono">agent/tools/orders.py · +4 −1</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Rewrite</button></span></div>';
     },
     test: function(){
-      return '<div class="ui-title"><b>Sandbox replay · fix #214</b><span class="st" data-status><span class="ic">'+CHECK+'</span><span>ready</span></span></div>'+
+      return '<div class="ui-title"><b>Sandbox replay · fix #214</b><span class="st" data-status role="status"><span class="ic">'+CHECK+'</span><span>ready</span></span></div>'+
         '<div class="prog"><i></i></div>'+
         '<div class="kv"><div><b data-count="200">0</b><span>past runs replayed</span></div><div><b data-count="121">0</b><span>of 148 hand-offs removed</span></div><div><b data-count="0">0</b><span>other behavior changed</span></div></div>'+
-        '<div class="pane-foot"><span class="pane-msg">Each run is replayed with and without the fix.</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run replay</button></span></div>';
+        '<div class="pane-foot"><span role="status" class="pane-msg">Each run is replayed with and without the fix.</span><span class="btns"><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run replay</button></span></div>';
     },
     ship: function(){
       return '<div class="pr"><div class="pr-repo mono">your-org/agent · pull request</div><div class="pr-head"><span class="badge" data-badge>Open</span><b>#214 Add order-history lookup before escalating</b></div>'+
         '<div class="pr-body"><h5>## Why</h5>148 hand-offs in 30 days came from requests the\nagent could answer from the order history.\n<h5>## Tested</h5>Replayed 200 past runs, including all 148: 121\nhand-offs removed, 0 other behavior changed.\n<h5>## Kept with a person</h5>Refunds above the policy limit still escalate.</div>'+
         '<div class="checks"><div class="chk"><span class="ic">'+CHECK+'</span>Sandbox replay: 121 of 148 hand-offs removed</div><div class="chk"><span class="ic">'+CHECK+'</span>Existing kept checks: 3 of 3 passing</div><div class="chk"><span class="ic">'+CHECK+'</span>Decision boundary unchanged</div></div></div>'+
-        '<div class="pane-foot"><span class="pane-msg">Running checks…</span><span class="btns"><button type="button" class="mini primary" data-act="approve" disabled>Approve as your team</button></span></div>';
+        '<div class="pane-foot"><span role="status" class="pane-msg">Running checks…</span><span class="btns"><button type="button" class="mini primary" data-act="approve" disabled>Approve as your team</button></span></div>';
     },
     monitor: function(){
       return '<div class="ui-title"><b>Kept checks</b><span>run on every agent release</span></div>'+
         '<div class="scroll-x"><table class="ui-table"><tbody>'+
         MON_ROWS.map(function(n){ return '<tr><td>'+n+'</td><td class="n"><span class="st"><span class="ic">'+CHECK+'</span><span>queued</span></span></td></tr>'; }).join("")+
-        '</tbody></table></div><div class="pane-foot"><span class="pane-msg">Release v2.4</span><span class="btns"><button type="button" class="mini warn" data-act="regress">Try a risky change</button><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run checks</button></span></div>';
+        '</tbody></table></div><div class="pane-foot"><span role="status" class="pane-msg">Release v2.4</span><span class="btns"><button type="button" class="mini warn" data-act="regress">Try a risky change</button><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Run checks</button></span></div>';
     },
     types: function(){
       var T = [["missing evidence","g","The agent escalated a delivery change without reading the order history that answered it.","Cairn adds the lookup and tests it on past runs."],
@@ -1716,7 +1716,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     REPLAY_RUNS.map(function(r){ return runRow(r[0], BEFORE[r[0]] ? "ho-flag" : "", "hand-off", true); }).join("")+
     '</div></div><div><h4>With fix · replayed</h4><div class="runs" data-after>'+
     REPLAY_RUNS.map(function(r){ return runRow(r[0], r[1], r[2], false); }).join("")+
-    '</div></div></div><div class="replay-foot"><span data-sum>Replaying 5 past runs…</span><span class="btns" style="display:flex;gap:12px;align-items:center"><span class="st" data-status><span class="ic">'+CHECK+'</span><span>waiting</span></span><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Replay again</button></span></div></div>'+NOTE;
+    '</div></div></div><div class="replay-foot"><span data-sum>Replaying 5 past runs…</span><span class="btns" style="display:flex;gap:12px;align-items:center"><span class="st" data-status role="status"><span class="ic">'+CHECK+'</span><span>waiting</span></span><button type="button" class="mini" data-act="replay">'+REPLAY_ICON+'Replay again</button></span></div></div>'+NOTE;
   PLAY.replayp = function(pv){
     var after = pv.querySelectorAll("[data-after] .run"), sum = pv.querySelector("[data-sum]"), removed = 0;
     after.forEach(function(r){ r.classList.remove("done"); });
@@ -1985,7 +1985,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       '<h2 id="sentH" tabindex="-1" style="font-size:28px;outline:none">Your details look complete, '+name.replace(/[<>&"]/g,"")+'.</h2><p style="color:var(--gray)">This preview does not send requests yet, so nothing was submitted. Once the form is live, a request here starts a 30-minute call about your agent.</p></div>';
     var sh = document.getElementById("sentH"); if(sh) sh.focus();
   });
-  form.addEventListener("input", function(e){ var f = e.target.closest(".field"); if(f && f.classList.contains("bad")){ f.classList.remove("bad"); f.querySelector(".err").hidden = true; } });
+  form.addEventListener("input", function(e){ var f = e.target.closest(".field"); if(f && f.classList.contains("bad")){ f.classList.remove("bad"); f.querySelector(".err").hidden = true; var n = form.querySelectorAll(".field.bad").length, se = document.getElementById("formSum"); se.textContent = n ? (n === 1 ? "1 field needs attention." : n + " fields need attention.") : ""; } });
 
   /* ---------- Reveal on scroll ---------- */
   var io = ("IntersectionObserver" in window && !reduce) ? new IntersectionObserver(function(entries){
@@ -2157,7 +2157,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
   }
   function setNb(v){ nbAcc = Math.max(0, v); nbBand.style.setProperty("--np", Math.min(1, nbAcc/NB_NEED).toFixed(3)); }
   function atBottom(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4; }
-  function nbGo(){ if(nbLock) return; nbLock = true; setNb(NB_NEED); location.hash = nbTitle.getAttribute("href"); }
+  function nbGo(){ if(nbLock) return; nbLock = true; navByClick = true; setNb(NB_NEED); location.hash = nbTitle.getAttribute("href"); }
   function nbScheduleDecay(){
     clearTimeout(nbDecay);
     nbDecay = setTimeout(function step(){ if(nbLock) return; setNb(nbAcc*0.82 - 8); if(nbAcc > 0) nbDecay = setTimeout(step, 30); }, 450);
