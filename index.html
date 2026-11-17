@@ -889,6 +889,15 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
 .window-bar{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:900px){.pane-foot .mini,.seg button,.ui-title .seg button,.method-link,a.more{min-height:40px;display:inline-flex;align-items:center}}
 .form-sum{color:var(--err);margin:0}.form-sum:empty{display:none}
+/* r6: round 6 fixes */
+.next-band a.nb-title{font-size:clamp(22px,2vw,26px);color:var(--gray)}
+.next-band a.nb-title:hover{color:var(--ink)}
+.next-band.solo a.nb-title{font-size:clamp(26px,3vw,34px);color:var(--ink)}
+.nb-track{height:2px}
+.next-band.touch .nb-hint svg{transform:rotate(180deg);animation:none}
+@media (min-width:901px){.stepbar-in{-webkit-mask-image:none;mask-image:none}}
+.nav{background:linear-gradient(var(--bg) 0, var(--bg) 40%, color-mix(in srgb,var(--bg) 0%,transparent) 100%)}
+@media (max-width:900px){.stepbar{background:var(--bg)}.code{white-space:pre-wrap;word-break:break-word}}
 </style>
 </head><body>
 <canvas id="field" aria-hidden="true"></canvas>
@@ -944,7 +953,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <h2 class="hero-h">Your AI agent hands off work it could do itself. Cairn fixes that.</h2>
-        <p class="lede">Cairn maps every hand-off your agent makes to a person, fixes the ones it could handle, tests each fix on your past runs, and ships it as a pull request. Judgment calls stay with your team.</p>
+        <p class="lede">Cairn maps the hand-offs your agent makes to a person, fixes the ones it could handle, tests each fix on your past runs, and ships it as a pull request. Judgment calls stay with your team.</p>
         <div class="btn-row">
           <a class="btn btn-primary" href="#pilot" data-cta="hero">Request a pilot</a>
           <a class="btn btn-secondary" href="#how-it-works">See how it works</a>
@@ -971,7 +980,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       <div class="grid-3">
         <a class="card rise linkcard" href="#method-missing-evidence"><span class="chip">missing evidence</span><h3>Information it never checked</h3><p>The answer was in a record the agent never consulted.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
         <a class="card rise linkcard" href="#method-tool-limit"><span class="chip">tool limit</span><h3>An action it cannot take</h3><p>The agent identifies the problem but has no way to act on it.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
-        <a class="card rise linkcard" href="#method-policy-boundary"><span class="chip">policy · unclear rule</span><h3>A rule it applies too cautiously</h3><p>An ambiguous policy leads the agent to escalate by default.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#method-policy-boundary"><span class="chip">policy boundary · unclear rule</span><h3>A rule it applies too cautiously</h3><p>An ambiguous policy leads the agent to escalate by default.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
       </div>
     </div>
   </section>
@@ -1112,7 +1121,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     <div class="wrap sub-hero-in">
       <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Proof</span>
       <h1>Every fix is tested on your past runs before you approve it.</h1>
-      <p class="lede">For each workflow we report four numbers: hand-offs removed, staff hours saved, time to first fix and wrong automations.</p>
+      <p class="lede">For each workflow we report four numbers: hand-offs removed, staff hours saved, time to first fix and the wrong-automation rate.</p>
     </div>
   </section>
   <section class="section">
@@ -1174,7 +1183,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       <div class="grid-4" id="logiCards">
         <button type="button" class="card pick rise" data-sel="1"><span class="chip g">tool limit</span><h3>No load-status lookup</h3><p>The status was available in your TMS, but the agent could not query it.</p></button>
         <button type="button" class="card pick rise" data-sel="2"><span class="chip g">tool limit</span><h3>Unreadable rate confirmations</h3><p>Rate confirmations arrive as PDFs that the agent cannot parse.</p></button>
-        <button type="button" class="card pick rise" data-sel="3"><span class="chip g">policy · unclear rule</span><h3>Overly cautious carrier rules</h3><p>A loosely worded appointment rule sends every edge case to a person.</p></button>
+        <button type="button" class="card pick rise" data-sel="3"><span class="chip g">policy boundary · unclear rule</span><h3>Overly cautious carrier rules</h3><p>A loosely worded appointment rule sends every edge case to a person.</p></button>
         <button type="button" class="card pick rise" data-sel="4"><span class="chip r">kept with a dispatcher</span><h3>Damaged freight</h3><p>Claims and liability decisions remain with your team.</p></button>
       </div>
     </div>
@@ -1296,7 +1305,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       <div class="stack"><span class="label">Team</span><h2 class="h2s">The founders.</h2></div>
       <div class="grid-3" id="team"></div>
     </div>
-    <div class="detail">
+    <div class="detail" id="contactSection" hidden>
       <div class="stack"><span class="label">Contact</span><h2 class="h2s">Talk to us.</h2></div>
       <div class="card contact-card">
         <p>For engineering leaders, a pilot request is the fastest way to start.</p>
@@ -1736,10 +1745,10 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
 
   /* How it works page */
   var DETAIL = {
-    map: {h:"What Cairn reads", p:["Cairn connects read-only to your agent's runs and escalation events: the traces you already collect, plus the record of every time a task went to a person.","It produces a hand-off map: each workflow step, how often it hands off, and where."]},
-    diagnose: {h:"Four kinds of hand-off", p:["Each hand-off gets one of four reasons. Missing evidence and tool limits are fixable. A policy boundary is fixable only when the rule itself is unclear. Human judgment always stays with your team."], types:true},
+    map: {h:"What Cairn reads", p:["Cairn connects with read access to your agent's runs and escalation events: the traces you already collect, plus the record of every time a task went to a person.","It produces a hand-off map: each workflow step, how often it hands off, and where."]},
+    diagnose: {h:"Four kinds of hand-off", p:["Each hand-off gets one of four reasons. Missing evidence and tool limits are fixable. A policy boundary is kept with a person, unless the rule turns out to be unclearly worded: that case is labeled unclear rule and is fixable. Human judgment always stays with your team."], types:true},
     change: {h:"Fixes written as code", p:["For a fixable hand-off, Cairn writes the change in your agent's own repository: a new lookup, a new tool, or a clearer rule in its instructions.","Each fix is small and scoped to one cause, so it is easy to review."]},
-    test: {h:"Sandbox replay", p:["Cairn replays your agent's past runs in a sandbox, once with the original behavior and once with the fix.","The comparison shows which hand-offs the fix removes, and confirms that every other run behaves the same."]},
+    test: {h:"Sandbox replay", p:["Cairn replays your agent's past runs in a sandbox, once with the original behavior and once with the fix.","The comparison shows which hand-offs the fix removes, and checks that no other run changes outcome."]},
     ship: {h:"An example pull request", p:["The fix arrives as a pull request with the evidence attached: why it was needed, what the replay showed, and what still goes to a person.","Your team reviews and merges it like any other code."]},
     monitor: {h:"Kept checks", p:["Each merged fix stays on as a check that runs on every new version of your agent.","If a later change brings a hand-off back, or automates one that should stay with a person, the check fails before it ships. Try the risky change to see it."]}
   };
@@ -1828,12 +1837,12 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
   /* ---------- Methodology pages ---------- */
   var METHODS = {
     "map": {g:"Steps", label:"01 Map", title:"How Cairn maps hand-offs", lede:"Cairn finds every point where your agent passed work to a person, using the traces you already collect.",
-      steps:[["Connect read-only","Cairn reads your agent's traces and escalation events: transfers to a queue, tickets created for a person, and runs that end in a handover."],
+      steps:[["Connect with read access","Cairn reads your agent's traces and escalation events: transfers to a queue, tickets created for a person, and runs that end in a handover."],
              ["Find each hand-off","A run counts as a hand-off when it ends with work assigned to a person instead of a resolution by the agent."],
              ["Place it on the workflow","Each hand-off is attached to the step where the agent stopped, so you see where in the workflow work leaves the agent."],
              ["Rank by cost","Steps are ranked by how often they hand off and how much staff time each hand-off takes."]],
-      input:"Agent traces and escalation events, read-only.", output:"A hand-off map for one workflow: steps, volumes and where each hand-off happens.", team:"You choose which workflow to map first.", vis:"pane"},
-    "diagnose": {g:"Steps", label:"02 Diagnose", title:"How Cairn finds the reason behind each hand-off", lede:"Every hand-off gets one of four reasons, with the evidence attached, so you can see why the agent stopped.",
+      input:"Agent traces and escalation events, with read access.", output:"A hand-off map for one workflow: steps, volumes and where each hand-off happens.", team:"You choose which workflow to map first.", vis:"pane"},
+    "diagnose": {g:"Steps", label:"02 Diagnose", title:"How Cairn finds the reason behind each hand-off", lede:"Every hand-off gets one of four reasons, with the evidence attached, plus an unclear-rule label for policy hand-offs caused by loose wording, so you can see why the agent stopped.",
       steps:[["Reconstruct the run","Cairn rebuilds what the agent saw: its inputs, the records it read and the tools it called."],
              ["Check what was within reach","It compares that with what the agent could have used: records in connected systems, tools in its toolset and the policy text it follows."],
              ["Assign one reason","Each hand-off is labeled missing evidence, tool limit, policy boundary or human judgment. Each reason is explained on its own page below."],
@@ -1843,7 +1852,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
       steps:[["One cause per fix","Each change targets a single reason, so it is easy to review and easy to revert."],
              ["Match the cause","Missing evidence gets a lookup. A tool limit gets a tool scoped to your team's permissions. An unclear rule gets clearer wording with explicit thresholds."],
              ["Follow your code","Changes follow the structure and conventions already in your repository."],
-             ["Leave boundaries alone","Hand-offs labeled policy boundary or human judgment are never targeted."]],
+             ["Leave boundaries alone","Hand-offs at a real policy boundary or labeled human judgment are never targeted."]],
       input:"Diagnosed hand-offs and read access to the agent's repository.", output:"A proposed change with the hand-offs it targets.", team:"Nothing is applied until the change is tested and your team approves it.", vis:"pane"},
     "test": {g:"Steps", label:"04 Test", title:"How sandbox replay works", lede:"Before you see a fix, Cairn replays it against your agent's past runs and compares every outcome.",
       steps:[["Choose the runs","The replay set includes the hand-offs the fix targets plus runs that did not hand off, to catch side effects."],
@@ -1885,25 +1894,25 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
              ["How it's protected","A kept check fails if a later version of your agent starts handling these cases on its own."]],
       example:"An upset customer with a damaged shipment needs a person's judgment and tone.", vis:"type"},
 
-    "handoffs-removed": {g:"Metrics", label:"Hand-offs removed", title:"How avoidable hand-offs removed is measured", lede:"How many fixable hand-offs no longer reach a person, per workflow.",
+    "handoffs-removed": {g:"Metrics", label:"Hand-offs removed", title:"How hand-offs removed are measured", lede:"How many fixable hand-offs no longer reach a person, per workflow.",
       formula:"removed = avoidable hand-offs (before) − avoidable hand-offs (after)",
       steps:[["Baseline","The hand-off map gives the count of fixable hand-offs over a fixed period before any fix."],
              ["After","The same count over a period of the same length once fixes are merged."],
              ["What counts","Only hand-offs labeled missing evidence, tool limit or unclear rule count. Hand-offs at a real policy boundary are excluded."]], vis:"metric"},
-    "hours-saved": {g:"Metrics", label:"Hours saved", title:"How human hours saved is measured", lede:"The staff time the removed hand-offs used to take.",
+    "hours-saved": {g:"Metrics", label:"Hours saved", title:"How staff hours saved are measured", lede:"The staff time the removed hand-offs used to take.",
       formula:"hours saved = Σ (hand-offs removed at a step × median handling time at that step)",
       steps:[["Handling time","Taken from the timestamps in your queue or ticketing system, or from your team's estimate when those don't exist."],
              ["Per step","Each step uses its own median, since a status check and an exception take very different time."],
              ["Reported","Hours saved are reported for each workflow every month, alongside the hand-off counts they come from."]], vis:"metric"},
     "time-to-first-fix": {g:"Metrics", label:"Time to first fix", title:"How time to first fix is measured", lede:"How long it takes from access to the first tested fix in your repository.",
       formula:"time to first fix = first passing pull request opened − read access granted",
-      steps:[["Start","The clock starts when read-only access is in place."],
+      steps:[["Start","The clock starts when read access is in place."],
              ["Stop","It stops when the first fix that passed sandbox replay is opened as a pull request."],
-             ["Target","The first fix should arrive within weeks. In a pilot, fixes and testing run in weeks 2 to 4."]], vis:"metric"},
+             ["Target","The first tested pull request arrives in weeks two to four of a pilot."]], vis:"metric"},
     "wrong-automation": {g:"Metrics", label:"Wrong-automation rate", title:"How the wrong-automation rate is measured", lede:"Cases the agent handled that should have reached a person. The target is zero.",
       formula:"rate = runs automated that needed a person ÷ runs checked",
       steps:[["How it's caught","Boundary checks replay hand-offs that must stay with people on every release. Your team's reviews add any case they spot."],
-             ["Target","The target is zero. Any case found flags the release for your team and is fixed before the change ships again."],
+             ["Target","The target is zero. Any case found flags the release, and your team decides whether it ships."],
              ["Reported","The rate is reported with every release, together with the runs behind any failure."]], vis:"metric"}
   };
   var MGROUPS = {"Steps":["map","diagnose","change","test","ship","monitor"],"Hand-off types":["missing-evidence","tool-limit","policy-boundary","human-judgment"],"Metrics":["handoffs-removed","hours-saved","time-to-first-fix","wrong-automation"]};
@@ -1980,11 +1989,20 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     if(!ok){ first.focus(); return; }
     track("pilot_requests");
     var name = form.elements.name.value.trim().split(" ")[0];
-    document.getElementById("formWrap").innerHTML =
+    showSent(name);
+  });
+  function showSent(name){
+    var wrap = document.getElementById("formWrap"), old = document.getElementById("sentCard"); if(old) old.remove();
+    form.hidden = true;
+    var card = document.createElement("div"); card.id = "sentCard"; wrap.appendChild(card);
+    card.innerHTML =
       '<div class="form sent" role="status"><div class="check"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>'+
       '<h2 id="sentH" tabindex="-1" style="font-size:28px;outline:none">Your details look complete, '+name.replace(/[<>&"]/g,"")+'.</h2><p style="color:var(--gray)">This preview does not send requests yet, so nothing was submitted. Once the form is live, a request here starts a 30-minute call about your agent.</p></div>';
+    var eb = document.createElement("button"); eb.type = "button"; eb.className = "mini"; eb.textContent = "Edit details"; eb.style.justifySelf = "start";
+    eb.addEventListener("click", function(){ card.remove(); form.hidden = false; form.elements.name.focus(); });
+    card.firstChild.appendChild(eb);
     var sh = document.getElementById("sentH"); if(sh) sh.focus();
-  });
+  }
   form.addEventListener("input", function(e){ var f = e.target.closest(".field"); if(f && f.classList.contains("bad")){ f.classList.remove("bad"); f.querySelector(".err").hidden = true; var n = form.querySelectorAll(".field.bad").length, se = document.getElementById("formSum"); se.textContent = n ? (n === 1 ? "1 field needs attention." : n + " fields need attention.") : ""; } });
 
   /* ---------- Reveal on scroll ---------- */
@@ -2108,7 +2126,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
     views.forEach(function(v){ v.hidden = v.dataset.view !== name; });
     nwrap(document.querySelector('.view[data-view="'+name+'"]'));
     if(name === "how-it-works" && window.cairnMarkStep) setTimeout(function(){ if(window.scrollY < 300) window.cairnMarkStep("how-map"); }, 60);
-    document.getElementById("nbCta").hidden = name === "home" || name === "pilot"; nbBand.classList.toggle("solo", name === "home" || name === "pilot");
+    var noCta = name === "home" || name === "pilot" || name === "logistics"; document.getElementById("nbCta").hidden = noCta; nbBand.classList.toggle("solo", noCta);
     var hintRow = document.getElementById("nbHint").parentNode; hintRow.hidden = name === "pilot"; document.querySelector("#nextBand .nb-track").hidden = name === "pilot";
     document.title = name === "method" ? "Cairn · " + METHODS[h.slice(7)].title : TITLES[name];
     Array.prototype.forEach.call(document.querySelectorAll("[data-link]"), function(a){
@@ -2148,7 +2166,7 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
   var NB_NAMES = {"home":"Back to the start","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Proof","logistics":"For logistics","pilot":"Run a pilot","faq":"Questions","about":"About Cairn"};
   var nbBand = document.getElementById("nextBand"), nbTitle = document.getElementById("nbTitle"), nbHint = document.getElementById("nbHint");
   var nbAcc = 0, nbLock = false, nbBottomSince = 0, nbDecay, NB_NEED = 600, nbLastWheel = 0, nbGesture = false;
-  nbHint.textContent = window.matchMedia("(hover: none)").matches ? "Swipe up again to continue" : "Scroll again to continue";
+  var nbTouchDev = window.matchMedia("(hover: none)").matches; nbHint.textContent = nbTouchDev ? "Swipe up again to continue" : "Scroll again to continue"; if(nbTouchDev) nbBand.classList.add("touch");
   function updateBand(name, h){
     var target, label;
     if(name === "method"){ var slug = h.slice(7), sib = MGROUPS[METHODS[slug].g], nx = sib[(sib.indexOf(slug) + 1) % sib.length]; target = "method-" + nx; label = METHODS[nx].title; }
@@ -2158,9 +2176,9 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
   function setNb(v){ nbAcc = Math.max(0, v); nbBand.style.setProperty("--np", Math.min(1, nbAcc/NB_NEED).toFixed(3)); }
   function atBottom(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4; }
   function nbGo(){ if(nbLock) return; nbLock = true; navByClick = true; setNb(NB_NEED); location.hash = nbTitle.getAttribute("href"); }
-  function nbScheduleDecay(){
+  function nbScheduleDecay(wait){
     clearTimeout(nbDecay);
-    nbDecay = setTimeout(function step(){ if(nbLock) return; setNb(nbAcc*0.82 - 8); if(nbAcc > 0) nbDecay = setTimeout(step, 30); }, 450);
+    nbDecay = setTimeout(function step(){ if(nbLock) return; setNb(nbAcc*0.82 - 8); if(nbAcc > 0) nbDecay = setTimeout(step, 30); }, wait || 450);
   }
   window.addEventListener("wheel", function(e){
     if(nbLock || document.querySelector("dialog[open]")) return;
@@ -2174,13 +2192,14 @@ main.entering .view:not([hidden]) > *{animation-duration:.45s}
   }, {passive:true});
   var nbTouchY = null;
   var nbAtBottomT = 0; window.addEventListener("scroll", function(){ if(atBottom()){ if(!nbAtBottomT) nbAtBottomT = performance.now(); } else nbAtBottomT = 0; }, {passive:true});
-  window.addEventListener("touchstart", function(e){ nbTouchY = (atBottom() && nbAtBottomT && performance.now() - nbAtBottomT > 300) ? e.touches[0].clientY : null; }, {passive:true});
+  var nbBase = 0, nbLastEnd = 0;
+  window.addEventListener("touchstart", function(e){ nbTouchY = (atBottom() && nbAtBottomT && performance.now() - nbAtBottomT > 300) ? e.touches[0].clientY : null; nbBase = (performance.now() - nbLastEnd < 1500) ? nbAcc : 0; clearTimeout(nbDecay); }, {passive:true});
   window.addEventListener("touchmove", function(e){
     if(nbLock) return;
     if(nbTouchY == null) return;
-    if(location.hash === "#pilot") return; setNb((nbTouchY - e.touches[0].clientY)*NB_NEED/320);
+    if(location.hash === "#pilot") return; setNb(nbBase + Math.max(0, nbTouchY - e.touches[0].clientY)*NB_NEED/180);
   }, {passive:true});
-  window.addEventListener("touchend", function(){ if(nbTouchY != null && nbAcc >= NB_NEED) nbGo(); else if(!nbLock) nbScheduleDecay(); nbTouchY = null; }, {passive:true});
+  window.addEventListener("touchend", function(){ if(nbTouchY != null && nbAcc >= NB_NEED) nbGo(); else if(!nbLock) nbScheduleDecay(1500); nbLastEnd = performance.now(); nbTouchY = null; }, {passive:true});
   window.addEventListener("keydown", function(e){
     if(false && atBottom() && !nbLock && !/INPUT|TEXTAREA|SELECT|BUTTON/.test((document.activeElement || {}).tagName || "")){
       setNb(nbAcc + 220); if(nbAcc >= NB_NEED) nbGo(); else nbScheduleDecay();
