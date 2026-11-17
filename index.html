@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cairn</title>
 <meta name="description" content="Cairn finds the hand-offs your AI agent could handle itself, fixes them as tested pull requests, and keeps judgment calls with your team.">
 <meta property="og:title" content="Cairn">
@@ -95,7 +95,7 @@ p{margin:0}
 .hero-copy{display:grid;gap:24px}
 .hero-copy .lede{max-width:54ch}
 .built-for{font-size:15px;color:var(--gray);display:flex;gap:10px;align-items:center}
-.built-for::before{content:"";width:18px;height:1px;background:var(--muted)}
+
 @media (max-width:900px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:40px}}
 
 /* Product window */
@@ -244,7 +244,7 @@ p{margin:0}
 /* Industries */
 .industry{text-decoration:none;color:inherit;transition:border-color .2s,transform .2s}
 .industry:hover{border-color:var(--muted)}
-.industry .go{margin-top:8px;color:var(--blue);font-weight:500;font-size:15px}
+.industry .go{margin-top:8px;color:var(--green-text);font-weight:500;font-size:15px}
 .industry h3{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 
 /* FAQ */
@@ -799,6 +799,44 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
 .faq,.faq details{border-color:color-mix(in srgb,var(--border) 60%,transparent)}
 .stepbar-in{border-color:transparent}
 .mark{border:0}
+
+/* r2: critique round 2 */
+:root{--muted:#7C8782}
+:root[data-theme="light"]{--muted:#6E7671}
+.curtain.in{transition:clip-path .24s cubic-bezier(.6,0,.2,1);pointer-events:none}
+.curtain.out{transition:clip-path .45s cubic-bezier(.6,0,.2,1)}
+.curtain .c-line{display:none}
+.curtain.in .mark g,.curtain.out .mark g{animation-duration:.3s}
+.curtain .mark .m1{animation-delay:0s!important}.curtain .mark .m2{animation-delay:.06s!important}.curtain .mark .m3{animation-delay:.12s!important}
+.hero{padding-top:clamp(20px,3vw,40px)}
+.hero .brand-title{font-size:clamp(44px,5.6vw,80px)}
+.brand-title .mark{width:clamp(36px,4.2vw,60px);height:clamp(36px,4.2vw,60px);border-radius:clamp(10px,1.2vw,16px)}
+.brand-top{margin-bottom:clamp(24px,3vw,36px);gap:8px}
+.hero .hero-h{font-size:clamp(28px,3.2vw,42px)}
+.next-band a.nb-title{font-size:clamp(26px,3.2vw,36px)}
+.next-band{padding-block:clamp(40px,6vw,72px)}
+.section.cta-section,.wrap.cta{padding-block:0}
+.tl-phases{grid-template-columns:minmax(150px,1.3fr) 3fr 2fr}
+.tl-phases button{grid-column:auto!important}
+.tl-weeks{display:none}
+@media (max-width:900px){.pilot-grid #formWrap{order:-1}}
+.video .play{display:none}
+/* r3: round 3 fixes */
+.nw{white-space:nowrap}
+.view > .sub-hero + .section{padding-top:clamp(16px,2.5vw,32px)}
+.view > .section:last-child:has(.wrap.cta){padding-bottom:clamp(24px,3vw,40px)}
+.next-band{border-top:1px solid var(--border);margin-inline:auto;max-width:calc(var(--wrap) + 2*max(24px, env(safe-area-inset-left,0px)))}
+.tl-phases{grid-template-columns:1fr}
+@media (min-width:621px){.tl-phases{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tl-phases b{white-space:nowrap}
+.tl-weeks{display:none}
+.row-2{align-items:start}
+.stepbar{padding:8px 0 10px;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.stepbar .stepbar-in{background:transparent;box-shadow:none;border-color:transparent}
+.demo-soon{padding:28px 28px 30px;display:grid;gap:14px;justify-items:start}
+.demo-soon h3{font-size:22px}
+.demo-soon p{color:var(--gray);max-width:56ch}
+dialog.modal{max-width:min(560px,calc(100vw - 32px))}
 </style>
 </head><body>
 <canvas id="field" aria-hidden="true"></canvas>
@@ -813,9 +851,10 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     <nav class="nav-links" aria-label="Main">
       <a href="#how-it-works" data-link="how-it-works">How it works</a>
       <a href="#why-cairn" data-link="why-cairn">Why Cairn</a>
-      <a href="#results" data-link="results">Results</a>
+      <a href="#results" data-link="results">Proof</a>
       <a href="#logistics" data-link="logistics">For logistics</a>
       <a href="#pilot" data-link="pilot">Pilot</a>
+      <a href="#faq" data-link="faq">Questions</a>
       <a href="#about" data-link="about">About</a>
     </nav>
     <div class="nav-right">
@@ -831,7 +870,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
   <div class="wrap mobile-menu" id="mobileMenu" hidden>
     <a href="#how-it-works">How it works</a>
     <a href="#why-cairn">Why Cairn</a>
-    <a href="#results">Results</a>
+    <a href="#results">Proof</a>
     <a href="#logistics">For logistics</a>
     <a href="#pilot">Pilot</a>
     <a href="#faq">Questions</a>
@@ -858,10 +897,10 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
           <a class="btn btn-primary" href="#pilot" data-cta="hero">Request a pilot</a>
           <button class="btn btn-secondary" type="button" data-demo>
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.25" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 5.2v5.6L11 8z" fill="currentColor"/></svg>
-            Watch the demo (100 s)
+            Watch the demo
           </button>
         </div>
-        <p class="built-for"><span>Built for teams running their own agents in <a href="#logistics">logistics</a>, <a href="#pilot">insurance</a> and <a href="#pilot">healthcare</a>.</span></p>
+        <p class="built-for"><span>Built for teams running their own agents in <a href="#logistics">logistics</a>, insurance and healthcare.</span></p>
       </div>
       <div class="window">
         <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>hand-off map · order-changes agent<a class="tag-link" href="#method-map">Method →</a></div>
@@ -883,7 +922,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
       <div class="grid-3">
         <a class="card rise linkcard" href="#method-missing-evidence"><span class="chip">missing evidence</span><h3>Information it never checked</h3><p>The answer was in a record the agent never consulted.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
         <a class="card rise linkcard" href="#method-tool-limit"><span class="chip">tool limit</span><h3>An action it cannot take</h3><p>The agent identifies the problem but has no way to act on it.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
-        <a class="card rise linkcard" href="#method-policy-boundary"><span class="chip">policy boundary</span><h3>A rule it applies too cautiously</h3><p>An ambiguous policy leads the agent to escalate by default.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#method-policy-boundary"><span class="chip">unclear rule</span><h3>A rule it applies too cautiously</h3><p>An ambiguous policy leads the agent to escalate by default.</p><span class="more">How Cairn handles this <span aria-hidden="true">→</span></span></a>
       </div>
     </div>
   </section>
@@ -900,12 +939,12 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     <div class="wrap">
       <div class="head">
         <span class="label">Explore</span>
-        <h2>Learn more about Cairn.</h2>
+        <h2>Explore how Cairn works.</h2>
       </div>
       <div class="grid-3 explore">
         <a class="card rise linkcard" href="#how-it-works"><span class="pnum">01</span><h3>How it works</h3><p>The six steps that turn a hand-off into a tested pull request.</p><span class="more">See the steps <span aria-hidden="true">→</span></span></a>
         <a class="card rise linkcard" href="#why-cairn"><span class="pnum">02</span><h3>Why Cairn</h3><p>Which work stays with your team, and how Cairn compares with observability tools.</p><span class="more">See the difference <span aria-hidden="true">→</span></span></a>
-        <a class="card rise linkcard" href="#results"><span class="pnum">03</span><h3>Results</h3><p>How each fix is validated on past runs, and the four metrics we report.</p><span class="more">See the replay <span aria-hidden="true">→</span></span></a>
+        <a class="card rise linkcard" href="#results"><span class="pnum">03</span><h3>Proof</h3><p>How each fix is validated on past runs, and the four metrics we report.</p><span class="more">See the replay <span aria-hidden="true">→</span></span></a>
         <a class="card rise linkcard" href="#logistics"><span class="pnum">04</span><h3>For logistics</h3><p>Where dispatch agents hand work to people, shown on an interactive map.</p><span class="more">See the map <span aria-hidden="true">→</span></span></a>
         <a class="card rise linkcard" href="#pilot"><span class="pnum">05</span><h3>Pilot</h3><p>A six-week engagement on one workflow, with measured results.</p><span class="more">See the timeline <span aria-hidden="true">→</span></span></a>
         <a class="card rise linkcard" href="#faq"><span class="pnum">06</span><h3>Questions</h3><p>Answers on access, compatibility, pricing and safeguards.</p><span class="more">Read the answers <span aria-hidden="true">→</span></span></a>
@@ -946,7 +985,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     <div class="detail wide">
       <div class="stack"><span class="label">Security</span><h2 class="h2s">Your team stays in control.</h2></div>
       <div class="grid-3 sec-grid">
-        <div class="card rise"><span class="chip g">read-only</span><h3>Read-only access</h3><p>Cairn reads your agent's logs and repository. It never writes to them directly.</p></div>
+        <div class="card rise"><span class="chip g">read-only</span><h3>Read-only access</h3><p>Cairn reads your agent's logs and repository. Its only write access is opening pull requests on a branch, and it never merges.</p></div>
         <div class="card rise"><span class="chip g">pull requests</span><h3>No production changes</h3><p>Every change arrives as a pull request in your repository.</p></div>
         <div class="card rise"><span class="chip g">your approval</span><h3>Your team merges</h3><p>Nothing ships until someone on your team approves it.</p></div>
       </div>
@@ -969,7 +1008,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
       <div class="head">
         <span class="label">What stays with people</span>
         <h2>Some hand-offs should stay hand-offs.</h2>
-        <p class="lede">Chargebacks, sensitive cases and policy approvals belong with your team. Cairn defines this decision boundary explicitly and never automates beyond it.</p>
+        <p class="lede">Chargebacks, sensitive cases and policy approvals belong with your team. Cairn defines this decision boundary explicitly, and hand-offs on the people side of it are never targeted with a fix.</p>
       </div>
       <div class="split rise">
         <div class="t">
@@ -1022,7 +1061,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
 <div class="view" data-view="results" hidden>
   <section class="sub-hero">
     <div class="wrap sub-hero-in">
-      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Results</span>
+      <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>Proof</span>
       <h1>Validated on your past runs and measured in hours saved.</h1>
       <p class="lede">Every fix is replayed against real runs before you approve it. Once it ships, we report four metrics for each workflow.</p>
     </div>
@@ -1035,7 +1074,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
         <p class="lede">Every fix is replayed against your agent's past runs and compared with what actually happened. You see which hand-offs it removes, and that nothing else changed, before anyone merges it.</p>
       </div>
       <div class="window rise">
-        <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>replay · fix #214 order-history lookup<a class="tag-link" href="#method-test">Method →</a></div>
+        <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>replay · fix #214 · 5 of 200 runs shown<a class="tag-link" href="#method-test">Method →</a></div>
         <div class="window-body" id="replayPanel"></div>
       </div>
     </div>
@@ -1065,7 +1104,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
         <span class="label eyebrow"><span class="pulse" aria-hidden="true"></span>For logistics</span>
         <h1 class="h1s">For logistics teams whose agents still hand work to dispatchers.</h1>
         <p class="lede">Freight agents book loads, chase carriers and handle exceptions. Many hand-offs come from a missing load-status lookup, a rate confirmation the agent can't read, or a carrier rule it applies too cautiously. Cairn finds those and fixes them, while exceptions that need a dispatcher's judgment stay with your team.</p>
-        <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="logistics-top">Request a pilot</a><button class="btn btn-secondary" type="button" data-demo>Watch the demo (100 s)</button></div>
+        <div class="btn-row"><a class="btn btn-primary" href="#pilot" data-cta="logistics-top">Request a pilot</a><button class="btn btn-secondary" type="button" data-demo>Watch the demo</button></div>
       </div>
       <div class="window" id="logiMapWin">
         <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span>hand-off map · dispatch agent<a class="tag-link" href="#method-map">Method →</a></div>
@@ -1084,7 +1123,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
         <p class="lede">Select a hand-off to see where it occurs on the map.</p>
       </div>
       <div class="grid-4" id="logiCards">
-        <button type="button" class="card pick rise" data-sel="1"><span class="chip g">missing evidence</span><h3>No load-status lookup</h3><p>The status was available in your TMS, but the agent could not query it.</p></button>
+        <button type="button" class="card pick rise" data-sel="1"><span class="chip g">tool limit</span><h3>No load-status lookup</h3><p>The status was available in your TMS, but the agent could not query it.</p></button>
         <button type="button" class="card pick rise" data-sel="2"><span class="chip g">tool limit</span><h3>Unreadable rate confirmations</h3><p>Rate confirmations arrive as PDFs that the agent cannot parse.</p></button>
         <button type="button" class="card pick rise" data-sel="3"><span class="chip g">unclear rule</span><h3>Overly cautious carrier rules</h3><p>A loosely worded appointment rule sends every edge case to a person.</p></button>
         <button type="button" class="card pick rise" data-sel="4"><span class="chip r">kept with a dispatcher</span><h3>Damaged freight</h3><p>Claims and liability decisions remain with your team.</p></button>
@@ -1133,7 +1172,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
           <div class="card rise"><h3>What's included</h3><ul class="ticks"><li>The hand-off map for one workflow</li><li>Two or three tested fixes as pull requests</li><li>A before-and-after report on hand-offs and hours saved</li></ul></div>
           <div class="card rise"><h3>What we need from you</h3><ul class="ticks"><li>Read-only access to your agent's logs</li><li>A repository to open pull requests against</li><li>One engineer for a weekly 30-minute review</li></ul></div>
         </div>
-        <div class="card rise"><h3>Pricing</h3><p>Pilots carry a one-time fee, which is credited toward your subscription if you continue. Subscriptions are billed monthly based on the number of workflows covered. Contact us for pricing.</p></div>
+        <div class="card rise"><h3>Pricing</h3><p>Pilots carry a one-time fee, which is credited toward your subscription if you continue. Subscriptions are billed monthly based on the number of workflows covered. Pricing is agreed on the first call, once we know the workflows involved.</p></div>
       </div>
       <div id="formWrap" class="form-sticky">
         <form class="form" id="pilotForm" novalidate>
@@ -1149,7 +1188,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
               <select id="f-volume" name="volume" required>
                 <option value="">Choose a range</option><option>Under 500</option><option>500–2,000</option><option>2,000–10,000</option><option>Over 10,000</option><option>Not sure</option>
               </select><span class="err" hidden>Choose a range, or "Not sure".</span></div>
-            <div class="field"><label for="f-stack">Agent framework or observability tool</label><input id="f-stack" name="stack" placeholder="e.g. LangGraph, Langfuse"></div>
+            <div class="field"><label for="f-stack">Framework or tracing tool</label><input id="f-stack" name="stack" placeholder="e.g. LangGraph"></div>
           </div>
           <button class="btn btn-primary" type="submit" style="width:100%">Request a pilot</button>
           <p class="small">We use these details only to reply about a pilot.</p>
@@ -1172,9 +1211,9 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     <div class="wrap faq-grid">
       <div class="stack" style="align-content:start"><span class="label">Before a pilot</span><h2 class="h2s">Six common questions.</h2></div>
       <div class="faq">
-        <details><summary>What do you need access to?</summary><p>Read-only access to your agent's logs and its code repository. Cairn never changes production directly; every change is a pull request.</p></details>
-        <details><summary>Does it work with our stack?</summary><p>Cairn reads the traces you already collect, whatever agent framework or observability tool you use.</p></details>
-        <details><summary>What if a fix is wrong?</summary><p>It's tested on past runs before you see it, and your team approves every merge. Hand-offs that need judgment are never automated.</p></details>
+        <details><summary>What do you need access to?</summary><p>Read-only access to your agent's logs, plus permission to open pull requests in its repository. Cairn never changes production directly and never merges; your team does.</p></details>
+        <details><summary>Does it work with our stack?</summary><p>Cairn reads the traces you already collect from common agent frameworks and observability tools. We confirm support for your stack on the first call.</p></details>
+        <details><summary>What if a fix is wrong?</summary><p>It's tested on past runs before you see it, and your team approves every merge. Hand-offs that need judgment are never targeted with a fix.</p></details>
         <details><summary>Do we have to replace our observability tool?</summary><p>No. Cairn works alongside your existing observability tools.</p></details>
         <details><summary>How is it priced?</summary><p>A one-time pilot fee, followed by a monthly subscription based on the number of workflows covered.</p></details>
         <details><summary>Who's behind Cairn?</summary><p>A team from UC Berkeley. See <a href="#about">About</a>.</p></details>
@@ -1197,7 +1236,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     <div class="detail wide">
       <div class="stack"><span class="label">What we believe</span><h2 class="h2s">Three rules we build by.</h2></div>
       <div class="grid-3 principles">
-        <div class="card rise"><span class="pnum">01</span><h3>Judgment stays with people.</h3><p>Some hand-offs should stay hand-offs. We draw that line explicitly and never automate past it.</p></div>
+        <div class="card rise"><span class="pnum">01</span><h3>Judgment stays with people.</h3><p>Some hand-offs should stay hand-offs. We draw that line explicitly and keep fixes on the right side of it.</p></div>
         <div class="card rise"><span class="pnum">02</span><h3>Prove it before it ships.</h3><p>Every fix is replayed on real past runs before anyone is asked to merge it.</p></div>
         <div class="card rise"><span class="pnum">03</span><h3>Measure in hours.</h3><p>We report hand-offs removed and staff hours saved, so results are concrete.</p></div>
       </div>
@@ -1239,7 +1278,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
         <span>Decision boundary infrastructure</span>
       </div>
       <nav aria-label="Footer">
-        <a href="#how-it-works">How it works</a><a href="#why-cairn">Why Cairn</a><a href="#results">Results</a><a href="#logistics">For logistics</a><a href="#pilot">Pilot</a><a href="#faq">Questions</a><a href="#about">About</a>
+        <a href="#how-it-works">How it works</a><a href="#why-cairn">Why Cairn</a><a href="#results">Proof</a><a href="#logistics">For logistics</a><a href="#pilot">Pilot</a><a href="#faq">Questions</a><a href="#about">About</a>
       </nav>
     </div>
     <div class="foot-bottom"><span>© 2026 Cairn</span></div>
@@ -1249,14 +1288,13 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
 <div class="curtain" id="curtain" aria-hidden="true"><div class="curtain-in"><span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><g class="m1"><ellipse cx="10" cy="15.6" rx="8.6" ry="2.7"/></g><g class="m2"><ellipse cx="9" cy="10.5" rx="6.3" ry="2.25" transform="rotate(-6 9 10.5)"/></g><g class="m3"><ellipse cx="11.4" cy="5.8" rx="4.4" ry="1.85" transform="rotate(8 11.4 5.8)"/></g></svg></span><span class="c-label" id="cLabel">Cairn</span><span class="c-title" id="cTitle"></span><span class="c-line"><i></i></span></div></div>
 <dialog class="modal" id="demoModal" aria-labelledby="demoTitle">
   <div class="modal-in">
-    <div class="modal-bar"><span id="demoTitle">Cairn product walkthrough · 100 s</span>
+    <div class="modal-bar"><span id="demoTitle">Product walkthrough</span>
       <button class="icon-btn" type="button" id="demoClose" aria-label="Close video"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6"/></svg></button>
     </div>
-    <div class="video">
-      <div>
-        <div class="play"><svg width="22" height="22" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10l8-5z" fill="currentColor"/></svg></div>
-        <p>The 100-second product walkthrough will be available here shortly.</p>
-      </div>
+    <div class="demo-soon">
+      <h3>The walkthrough video is in production.</h3>
+      <p>Until it is ready, the How it works page shows each of the six steps with interactive examples of the map, the fix, the replay and the pull request.</p>
+      <a class="btn btn-primary" href="#how-it-works" data-close-demo>See how it works</a>
     </div>
   </div>
 </dialog>
@@ -1320,12 +1358,12 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
       {t:"Look up the order", h:{r:"Never read the order history", k:"test", type:"Missing evidence", why:"The answer was in the order history, which the agent never queried.", fix:"Cairn adds an order-history lookup before escalating, then tests it on past runs."}},
       {t:"Check the change policy", h:{r:"Refund above policy limit", k:"keep", type:"Policy boundary", why:"Refunds above the limit need a manager's approval.", fix:"Kept with a person. Cairn records it as a boundary and checks that it stays one."}},
       {t:"Update the order", h:{r:"No tool to edit the address", k:"test", type:"Tool limit", why:"The agent knew the new address but had no tool to change it.", fix:"Cairn adds an address-edit tool with the same permissions your team uses."}},
-      {t:"Reply to the customer", h:{r:"Upset customer, sensitive case", k:"keep", type:"Human judgment", why:"An upset customer needs a person's judgment and tone.", fix:"Kept with a person. Cairn never automates past this line."}}
+      {t:"Reply to the customer", h:{r:"Upset customer, sensitive case", k:"keep", type:"Human judgment", why:"An upset customer needs a person's judgment and tone.", fix:"Kept with a person. Cairn does not target this hand-off with a fix."}}
     ],
     logistics: [
       {t:"Receive the load tender"},
       {t:"Check load status", h:{r:"No load-status lookup", k:"test", type:"Missing evidence", why:"The load status was in your TMS, but the agent had no way to query it.", fix:"Cairn adds a load-status lookup and replays past tenders to prove it."}},
-      {t:"Read the rate confirmation", h:{r:"Can't read the rate con PDF", k:"test", type:"Tool limit", why:"Rate confirmations arrive as PDFs the agent can't parse.", fix:"Cairn adds a rate-confirmation parser and checks it against past loads."}},
+      {t:"Read the rate confirmation", h:{r:"Can't read the rate confirmation PDF", k:"test", type:"Tool limit", why:"Rate confirmations arrive as PDFs the agent can't parse.", fix:"Cairn adds a rate-confirmation parser and checks it against past loads."}},
       {t:"Apply carrier rules", h:{r:"Reads a carrier rule too cautiously", k:"test", type:"Unclear rule", why:"An appointment-window rule is worded loosely, so the agent escalates every edge case.", fix:"Cairn rewrites the rule with explicit thresholds, then replays past loads."}},
       {t:"Handle exceptions", h:{r:"Damaged freight needs a call", k:"keep", who:"Kept with a dispatcher", type:"Human judgment", why:"Damaged freight means a claim, a customer call and a judgment on liability.", fix:"Kept with a dispatcher. Cairn marks the boundary and keeps it."}},
       {t:"Book and confirm"}
@@ -1402,7 +1440,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
       legend.querySelector("[data-map-replay]").addEventListener("click", function(){ host._sel = null; mapDetail(host); renderMap(host, true); });
       var d = document.createElement("div"); d.className = "map-detail"; d.setAttribute("aria-live","polite");
       legend.insertAdjacentElement("afterend", d); host._detail = d;
-      host.addEventListener("click", function(e){ var g = e.target.closest(".ho"); if(!g) return; var i = +g.getAttribute("data-i"); host._sel = host._sel === i ? null : i; mapDetail(host); });
+      host.addEventListener("click", function(e){ var g = e.target.closest(".ho"); if(!g) return; var i = +g.getAttribute("data-i"); host._sel = i; mapDetail(host); });
       host.addEventListener("keydown", function(e){ if((e.key === "Enter" || e.key === " ") && e.target.closest(".ho")){ e.preventDefault(); e.target.closest(".ho").dispatchEvent(new MouseEvent("click", {bubbles:true})); } });
     }
     if(!animate || reduce){ hos.forEach(settle); host.classList.remove("anim"); mapDetail(host); return; }
@@ -1489,7 +1527,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
       var T = [["missing evidence","g","The agent escalated a delivery change without reading the order history that answered it.","Cairn adds the lookup and tests it on past runs."],
                ["tool limit","g","The agent knew the new address but had no tool to update it.","Cairn adds the tool, scoped to your team's permissions."],
                ["policy boundary","r","A refund above the policy limit needs a manager's approval.","Kept with a person. Cairn keeps a check on it."],
-               ["human judgment","r","An upset customer with a damaged shipment needs a person.","Kept with a person. Never automated."]];
+               ["human judgment","r","An upset customer with a damaged shipment needs a person.","This hand-off stays with a person and is not targeted with a fix."]];
       return '<div class="types">'+T.map(function(t){ return '<div class="rv" tabindex="0" role="button" aria-pressed="false"><span class="chip '+t[1]+'">'+t[0]+'</span><p class="front">'+t[2]+'</p><p class="back">'+t[3]+'<br>'+methodLink(t[0].replace(/ /g,"-"))+'</p><span class="tip">Click to see what Cairn does</span></div>'; }).join("")+'</div>';
     }
   };
@@ -1630,7 +1668,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
       r.classList.add("done"); if(REPLAY_RUNS[i][1] === "ok-flag") removed++;
       sum.innerHTML = '<b>'+removed+' of 3</b> hand-offs removed so far';
     }, 300 + i*520); });
-    later(pv, function(){ sum.innerHTML = '<b>2 of 3</b> hand-offs removed · run 1051 still needs a person'; setStatus(pv, "ok", "regression check passed"); }, 300 + after.length*520 + 200);
+    later(pv, function(){ sum.innerHTML = '<b>2 of 3</b> hand-offs removed in this sample · run 1051 still needs a person'; setStatus(pv, "ok", "regression check passed"); }, 300 + after.length*520 + 200);
   };
   var replayPv = replayPanel.firstChild;
   replayPv.addEventListener("pointerover", function(e){ var r = e.target.closest(".run"); var rp = replayPv.querySelector(".replay");
@@ -1642,7 +1680,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
   /* How it works page */
   var DETAIL = {
     map: {h:"What Cairn reads", p:["Cairn connects read-only to your agent's runs and escalation events: the traces you already collect, plus the record of every time a task went to a person.","It produces a hand-off map: each workflow step, how often it hands off, and where."]},
-    diagnose: {h:"Four kinds of hand-off", p:["Each hand-off gets one of four reasons. The first two are usually fixable. The last two mark your decision boundary."], types:true},
+    diagnose: {h:"Four kinds of hand-off", p:["Each hand-off gets one of four reasons. Missing evidence and tool limits are fixable. A policy boundary is fixable only when the rule itself is unclear. Human judgment always stays with your team."], types:true},
     change: {h:"Fixes written as code", p:["For a fixable hand-off, Cairn writes the change in your agent's own repository: a new lookup, a new tool, or a clearer rule in its instructions.","Each fix is small and scoped to one cause, so it is easy to review."]},
     test: {h:"Sandbox replay", p:["Cairn replays your agent's past runs in a sandbox, once with the original behavior and once with the fix.","The comparison shows which hand-offs the fix removes, and confirms that every other run behaves the same."]},
     ship: {h:"An example pull request", p:["The fix arrives as a pull request with the evidence attached: why it was needed, what the replay showed, and what still goes to a person.","Your team reviews and merges it like any other code."]},
@@ -1718,7 +1756,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     var cur = +tl.querySelector('[aria-selected="true"]').dataset.ph, n = (cur + (e.key === "ArrowRight" ? 1 : 2)) % 3;
     stop(tl); setPhase(n); tlBtns[n].focus();
   });
-  onView(tl, function(){ if(reduce) return; later(tl, function(){ setPhase(1); }, 1400); later(tl, function(){ setPhase(2); }, 2800); });
+  
 
   /* Copy email */
   document.getElementById("copyEmail").addEventListener("click", function(){
@@ -1739,12 +1777,12 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     "diagnose": {g:"Steps", label:"02 Diagnose", title:"How Cairn finds the reason behind each hand-off", lede:"Every hand-off gets one of four reasons, with the evidence attached, so you can see why the agent stopped.",
       steps:[["Reconstruct the run","Cairn rebuilds what the agent saw: its inputs, the records it read and the tools it called."],
              ["Check what was within reach","It compares that with what the agent could have used: records in connected systems, tools in its toolset and the policy text it follows."],
-             ["Assign one reason","Missing evidence, tool limit, policy boundary or human judgment. Each reason has its own page below."],
+             ["Assign one reason","Each hand-off is labeled missing evidence, tool limit, policy boundary or human judgment. Each reason is explained on its own page below."],
              ["Default to people","When the reason is unclear, the hand-off is labeled human judgment and stays with your team."]],
       input:"The hand-off map and the runs behind it.", output:"Each hand-off labeled with a reason and the evidence for it.", team:"Your team can relabel any hand-off. Cairn follows your call.", vis:"pane"},
     "change": {g:"Steps", label:"03 Change", title:"How Cairn writes a fix", lede:"For each fixable cause, Cairn writes one small change in your agent's own repository.",
       steps:[["One cause per fix","Each change targets a single reason, so it is easy to review and easy to revert."],
-             ["Match the cause","Missing evidence gets a lookup. A tool limit gets a tool scoped to your team's permissions. A cautious rule gets clearer wording with explicit thresholds."],
+             ["Match the cause","Missing evidence gets a lookup. A tool limit gets a tool scoped to your team's permissions. An unclear rule gets clearer wording with explicit thresholds."],
              ["Follow your code","Changes follow the structure and conventions already in your repository."],
              ["Leave boundaries alone","Hand-offs labeled policy boundary or human judgment are never targeted."]],
       input:"Diagnosed hand-offs and read access to the agent's repository.", output:"A proposed change with the hand-offs it targets.", team:"Nothing is applied until the change is tested and your team approves it.", vis:"pane"},
@@ -1767,47 +1805,47 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
              ["Report","Each release shows which checks ran, which passed, and why any failed."]],
       input:"Merged fixes and recorded boundaries.", output:"A pass or fail result on every agent release.", team:"You decide whether a flagged release ships.", vis:"pane"},
 
-    "missing-evidence": {g:"Hand-off types", label:"Missing evidence", title:"Missing evidence", lede:"The agent handed off because it didn't have information that existed somewhere it could reach.", kind:"g", verdict:"Usually fixable",
+    "missing-evidence": {g:"Hand-off types", label:"Missing evidence", title:"How Cairn handles missing evidence", lede:"The agent handed off because it didn't have information that existed somewhere it could reach.", kind:"g", verdict:"Usually fixable",
       steps:[["What Cairn looks for","The answer was in a system the agent can query, or in a record it never opened."],
              ["How it's confirmed","Cairn checks that the record existed at the time of the run and that the agent had access to it."],
              ["Typical fix","Add a lookup before the agent escalates, then replay past runs to confirm it resolves them."]],
       example:"A customer asks to change a delivery. The order history shows the same change was approved before, but the agent never reads it and escalates.", vis:"type"},
-    "tool-limit": {g:"Hand-off types", label:"Tool limit", title:"Tool limit", lede:"The agent knew what needed to happen but had no way to do it.", kind:"g", verdict:"Usually fixable",
+    "tool-limit": {g:"Hand-off types", label:"Tool limit", title:"How Cairn handles a tool limit", lede:"The agent knew what needed to happen but had no way to do it.", kind:"g", verdict:"Usually fixable",
       steps:[["What Cairn looks for","The agent's reasoning reaches the right action, then it escalates because no tool performs that action."],
              ["How it's confirmed","Cairn checks that the action is one your team performs routinely, through a system the agent could be allowed to use."],
              ["Typical fix","Add a tool with the same permissions your team uses, then replay past runs."]],
       example:"The agent has the customer's new address but no tool to update the order, so a person makes a one-field edit.", vis:"type"},
-    "policy-boundary": {g:"Hand-off types", label:"Policy boundary", title:"Policy boundary", lede:"The agent stopped at a rule. Some of these are real limits. Others are rules the agent reads too cautiously.", kind:"r", verdict:"Sometimes fixable",
-      steps:[["Two cases","A real boundary is a limit your team sets on purpose, such as an approval above an amount. A cautious reading is a loosely worded rule the agent applies to cases it doesn't cover."],
+    "policy-boundary": {g:"Hand-off types", label:"Policy boundary", title:"How Cairn handles a policy boundary", lede:"The agent stopped at a rule. Some of these are real limits. Others are rules the agent reads too cautiously.", kind:"r", verdict:"Sometimes fixable",
+      steps:[["Two kinds of policy hand-off","A real boundary is a limit your team sets on purpose, such as an approval above a set amount. An unclear rule is loosely worded, so the agent applies it to cases it was never meant to cover."],
              ["How they're separated","Cairn reads the policy text and how your team resolved similar hand-offs. If people always approve a case, the rule is likely being read too cautiously."],
-             ["What Cairn does","A cautious reading gets clearer wording with explicit thresholds. A real boundary is recorded and kept with a person."]],
+             ["What Cairn does","An unclear rule gets clearer wording with explicit thresholds. A real boundary is recorded and kept with a person."]],
       example:"A refund above the policy limit needs a manager: kept. An appointment-window rule worded loosely, so every edge case escalates: fixable.", vis:"type"},
-    "human-judgment": {g:"Hand-off types", label:"Human judgment", title:"Human judgment", lede:"Some cases need a person: sensitive, ambiguous or high stakes. These stay hand-offs.", kind:"r", verdict:"Kept with a person",
+    "human-judgment": {g:"Hand-off types", label:"Human judgment", title:"How Cairn handles human judgment", lede:"Some cases need a person: sensitive, ambiguous or high stakes. These stay hand-offs.", kind:"r", verdict:"Kept with a person",
       steps:[["What Cairn looks for","Signs that a person's judgment is the point: an upset customer, a liability question, conflicting information, or context only a person can get."],
              ["What Cairn does","Nothing is automated. The hand-off is recorded as part of your decision boundary."],
              ["How it's protected","A kept check fails if a later version of your agent starts handling these cases on its own."]],
       example:"An upset customer with a damaged shipment needs a person's judgment and tone.", vis:"type"},
 
-    "handoffs-removed": {g:"Metrics", label:"Hand-offs removed", title:"Avoidable hand-offs removed", lede:"How many fixable hand-offs no longer reach a person, per workflow.",
+    "handoffs-removed": {g:"Metrics", label:"Hand-offs removed", title:"How avoidable hand-offs removed is measured", lede:"How many fixable hand-offs no longer reach a person, per workflow.",
       formula:"removed = avoidable hand-offs (before) − avoidable hand-offs (after)",
       steps:[["Baseline","The hand-off map gives the count of fixable hand-offs over a fixed period before any fix."],
              ["After","The same count over a period of the same length once fixes are merged."],
-             ["What counts","Only hand-offs labeled missing evidence, tool limit or a cautious rule. Boundary hand-offs are excluded."]], vis:"metric"},
-    "hours-saved": {g:"Metrics", label:"Hours saved", title:"Human hours saved", lede:"The staff time the removed hand-offs used to take.",
+             ["What counts","Only hand-offs labeled missing evidence, tool limit or unclear rule count. Hand-offs at a real policy boundary are excluded."]], vis:"metric"},
+    "hours-saved": {g:"Metrics", label:"Hours saved", title:"How human hours saved is measured", lede:"The staff time the removed hand-offs used to take.",
       formula:"hours saved = Σ (hand-offs removed at a step × median handling time at that step)",
       steps:[["Handling time","Taken from the timestamps in your queue or ticketing system, or from your team's estimate when those don't exist."],
              ["Per step","Each step uses its own median, since a status check and an exception take very different time."],
-             ["Reported","Per workflow, per month, alongside the hand-off counts it comes from."]], vis:"metric"},
-    "time-to-first-fix": {g:"Metrics", label:"Time to first fix", title:"Time to first fix", lede:"How long it takes from access to the first tested fix in your repository.",
+             ["Reported","Hours saved are reported for each workflow every month, alongside the hand-off counts they come from."]], vis:"metric"},
+    "time-to-first-fix": {g:"Metrics", label:"Time to first fix", title:"How time to first fix is measured", lede:"How long it takes from access to the first tested fix in your repository.",
       formula:"time to first fix = first passing pull request opened − read access granted",
       steps:[["Start","The clock starts when read-only access is in place."],
              ["Stop","It stops when the first fix that passed sandbox replay is opened as a pull request."],
-             ["Target","Weeks, not quarters. In a pilot, fixes and testing run in weeks 2 to 4."]], vis:"metric"},
-    "wrong-automation": {g:"Metrics", label:"Wrong-automation rate", title:"Wrong-automation rate", lede:"Cases the agent handled that should have reached a person. Cairn keeps this at zero.",
+             ["Target","The first fix should arrive within weeks. In a pilot, fixes and testing run in weeks 2 to 4."]], vis:"metric"},
+    "wrong-automation": {g:"Metrics", label:"Wrong-automation rate", title:"How the wrong-automation rate is measured", lede:"Cases the agent handled that should have reached a person. The target is zero.",
       formula:"rate = runs automated that needed a person ÷ runs checked",
       steps:[["How it's caught","Boundary checks replay hand-offs that must stay with people on every release. Your team's reviews add any case they spot."],
-             ["Target","Zero. Any case found blocks the release or is fixed before it ships again."],
-             ["Reported","With every release, with the runs behind any failure."]], vis:"metric"}
+             ["Target","The target is zero. Any case found blocks the release or is fixed before it ships again."],
+             ["Reported","The rate is reported with every release, together with the runs behind any failure."]], vis:"metric"}
   };
   var MGROUPS = {"Steps":["map","diagnose","change","test","ship","monitor"],"Hand-off types":["missing-evidence","tool-limit","policy-boundary","human-judgment"],"Metrics":["handoffs-removed","hours-saved","time-to-first-fix","wrong-automation"]};
   var methodView = document.getElementById("methodView");
@@ -1864,7 +1902,7 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
   });
   function closeModal(){ if(modal.close) modal.close(); else modal.removeAttribute("open"); if(lastFocus) lastFocus.focus(); }
   document.getElementById("demoClose").addEventListener("click", closeModal);
-  modal.addEventListener("click", function(e){ if(e.target === modal) closeModal(); });
+  modal.addEventListener("click", function(e){ if(e.target === modal || e.target.closest("[data-close-demo]")){ if(modal.close) modal.close(); else modal.removeAttribute("open"); } });
 
   /* ---------- Pilot form ---------- */
   var form = document.getElementById("pilotForm");
@@ -1882,8 +1920,8 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     var name = form.elements.name.value.trim().split(" ")[0];
     document.getElementById("formWrap").innerHTML =
       '<div class="form sent" role="status"><div class="check"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>'+
-      '<h2 style="font-size:28px">Thanks, '+name.replace(/[<>&"]/g,"")+'.</h2><p style="color:var(--gray)">Your pilot request is in. We will reply within two working days to set up a 30-minute call about your agent.</p>'+
-      '<p class="small todo">Preview build: this form is not yet connected to the team inbox, so nothing was sent.</p></div>';
+      '<h2 id="sentH" tabindex="-1" style="font-size:28px;outline:none">Thanks, '+name.replace(/[<>&"]/g,"")+'.</h2><p style="color:var(--gray)">This site is in preview and the form is not connected to our inbox yet, so your request was not sent. When it goes live, every request gets a reply within two working days to set up a 30-minute call about your agent.</p></div>';
+    var sh = document.getElementById("sentH"); if(sh) sh.focus();
   });
   form.addEventListener("input", function(e){ var f = e.target.closest(".field"); if(f && f.classList.contains("bad")){ f.classList.remove("bad"); f.querySelector(".err").hidden = true; } });
 
@@ -1996,15 +2034,17 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
   });
 
   /* ---------- Router ---------- */
-  var TITLES = {"home":"Cairn","how-it-works":"Cairn · How it works","why-cairn":"Cairn · Why Cairn","results":"Cairn · Results","logistics":"Cairn · For logistics","pilot":"Cairn · Pilot","faq":"Cairn · Questions","about":"Cairn · About"};
-  var PAGE_NAMES = {"home":"Home","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Results","logistics":"For logistics","pilot":"Pilot","faq":"Questions","about":"About"};
+  var TITLES = {"home":"Cairn","how-it-works":"Cairn · How it works","why-cairn":"Cairn · Why Cairn","results":"Cairn · Proof","logistics":"Cairn · For logistics","pilot":"Cairn · Pilot","faq":"Cairn · Questions","about":"Cairn · About"};
+  var PAGE_NAMES = {"home":"Home","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Proof","logistics":"For logistics","pilot":"Pilot","faq":"Questions","about":"About"};
   var views = Array.prototype.slice.call(document.querySelectorAll(".view"));
   var mainEl = document.getElementById("main"), firstRoute = true, routeT, bar = document.createElement("div");
   bar.className = "route-bar"; bar.setAttribute("aria-hidden","true"); document.body.appendChild(bar);
+  function nwrap(root){ if(!root) return; root.querySelectorAll("h1,h2,h3,.nb-title").forEach(function(el){ if(el.querySelector(".nw")) return; var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n, list = []; while((n = w.nextNode())) if(/hand-off/i.test(n.nodeValue)) list.push(n); list.forEach(function(t){ var f = document.createElement("span"); f.innerHTML = t.nodeValue.replace(/[<>&]/g, function(c){ return {"<":"&lt;",">":"&gt;","&":"&amp;"}[c]; }).replace(/(hand-offs?)/gi, '<span class="nw">$1</span>'); t.parentNode.replaceChild(f, t); }); }); }
   function show(name, h){
     if(name === "method") renderMethod(h.slice(7));
     updateBand(name, h);
     views.forEach(function(v){ v.hidden = v.dataset.view !== name; });
+    nwrap(document.querySelector('.view[data-view="'+name+'"]'));
     document.title = name === "method" ? "Cairn · " + METHODS[h.slice(7)].title : TITLES[name];
     Array.prototype.forEach.call(document.querySelectorAll("[data-link]"), function(a){
       if(a.dataset.link === (name === "method" ? "how-it-works" : name)) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
@@ -2028,15 +2068,16 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
     document.getElementById("cTitle").textContent = name === "method" ? METHODS[h.slice(7)].title : PAGE_NAMES[name];
     document.getElementById("cLabel").textContent = name === "method" ? "Methodology · " + METHODS[h.slice(7)].g : "Cairn";
     cur2.className = "curtain"; void cur2.offsetWidth; cur2.className = "curtain in";
-    route._t.push(setTimeout(function(){ show(name, h); mainEl.classList.remove("entering"); }, 520));
-    route._t.push(setTimeout(function(){ cur2.className = "curtain out"; void mainEl.offsetWidth; mainEl.classList.add("entering"); }, 1000));
-    route._t.push(setTimeout(function(){ cur2.className = "curtain"; mainEl.classList.remove("entering"); }, 1650));
+    route._t.push(setTimeout(function(){ show(name, h); mainEl.classList.remove("entering"); }, 260));
+    route._t.push(setTimeout(function(){ cur2.className = "curtain out"; void mainEl.offsetWidth; mainEl.classList.add("entering"); focusH1(); }, 380));
+    route._t.push(setTimeout(function(){ cur2.className = "curtain"; mainEl.classList.remove("entering"); }, 900));
   }
+  function focusH1(){ var v = views.filter(function(x){ return !x.hidden; })[0]; var h1 = v && v.querySelector("h1"); if(h1){ h1.setAttribute("tabindex","-1"); h1.style.outline="none"; try{ h1.focus({preventScroll:true}); }catch(e){} } }
   /* Scroll-through to the next page */
   var ORDER = ["home","how-it-works","why-cairn","results","logistics","pilot","faq","about"];
-  var NB_NAMES = {"home":"Back to the start","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Results","logistics":"For logistics","pilot":"Run a pilot","faq":"Questions","about":"About Cairn"};
+  var NB_NAMES = {"home":"Back to the start","how-it-works":"How it works","why-cairn":"Why Cairn","results":"Proof","logistics":"For logistics","pilot":"Run a pilot","faq":"Questions","about":"About Cairn"};
   var nbBand = document.getElementById("nextBand"), nbTitle = document.getElementById("nbTitle"), nbHint = document.getElementById("nbHint");
-  var nbAcc = 0, nbLock = false, nbBottomSince = 0, nbDecay, NB_NEED = 260;
+  var nbAcc = 0, nbLock = false, nbBottomSince = 0, nbDecay, NB_NEED = 600, nbLastWheel = 0, nbGesture = false;
   if(window.matchMedia("(hover: none)").matches) nbHint.textContent = "Keep swiping to continue";
   function updateBand(name, h){
     var target, label;
@@ -2054,8 +2095,10 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
   window.addEventListener("wheel", function(e){
     if(nbLock || document.querySelector("dialog[open]")) return;
     if(!atBottom()){ nbBottomSince = 0; if(nbAcc) setNb(0); return; }
-    if(!nbBottomSince){ nbBottomSince = performance.now(); return; }
-    if(performance.now() - nbBottomSince < 80) return;
+    var now = performance.now(), gap = now - nbLastWheel; nbLastWheel = now;
+    if(!nbBottomSince){ nbBottomSince = now; nbGesture = false; return; }
+    if(!nbGesture){ if(gap < 300) return; nbGesture = true; }
+    if(location.hash === "#pilot") return;
     if(e.deltaY > 0){ setNb(nbAcc + Math.min(e.deltaY, 120)); if(nbAcc >= NB_NEED) nbGo(); else nbScheduleDecay(); }
     else if(e.deltaY < 0) setNb(0);
   }, {passive:true});
@@ -2064,11 +2107,11 @@ footer{border-top-color:color-mix(in srgb,var(--border) 60%,transparent)}
   window.addEventListener("touchmove", function(e){
     if(nbLock) return;
     if(nbTouchY == null){ if(atBottom()) nbTouchY = e.touches[0].clientY; return; }
-    setNb((nbTouchY - e.touches[0].clientY)*NB_NEED/160);
+    if(location.hash === "#pilot") return; setNb((nbTouchY - e.touches[0].clientY)*NB_NEED/220);
   }, {passive:true});
   window.addEventListener("touchend", function(){ if(nbTouchY != null && nbAcc >= NB_NEED) nbGo(); else if(!nbLock) nbScheduleDecay(); nbTouchY = null; }, {passive:true});
   window.addEventListener("keydown", function(e){
-    if((e.key === "PageDown" || e.key === " " || e.key === "ArrowDown") && atBottom() && !nbLock && !/INPUT|TEXTAREA|SELECT|BUTTON/.test((document.activeElement || {}).tagName || "")){
+    if(false && atBottom() && !nbLock && !/INPUT|TEXTAREA|SELECT|BUTTON/.test((document.activeElement || {}).tagName || "")){
       setNb(nbAcc + 220); if(nbAcc >= NB_NEED) nbGo(); else nbScheduleDecay();
     }
   });
